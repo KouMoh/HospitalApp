@@ -29,7 +29,7 @@ app.use(session({
         collectionName: 'sessions'
     }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // true on Vercel
+        secure: false, // Set to false for HTTP testing, true for production HTTPS
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000 // 1 day (adjust as needed)
