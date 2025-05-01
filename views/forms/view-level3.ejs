@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>View Level 3 Form (Read-Only)</title>
+    <title>View Level 3 Forms (Read-Only)</title>
     <meta http-equiv="Cache-Control" content="no-store" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -19,10 +19,101 @@
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
-                <h4>Read-Only Level 3 Form</h4>
+                <h4>Read-Only Level 3 Forms</h4>
             </div>
             <div class="card-body">
-                <p>This is a read-only view of Level 3 form content.</p>
+                <% if (forms && forms.length > 0) { %>
+                    <% forms.forEach(form => { %>
+                        <div class="mb-4 border rounded p-3 bg-light">
+                            <h5><%= form.title %></h5>
+                            <div>
+                                <strong>Level-1 UID:</strong> <%= form.content.level1_uid %> |
+                                <strong>Date:</strong> <%= form.content.date %>
+                            </div>
+                            <div>
+                                <strong>Patient/Relative Name:</strong> <%= form.content.patient_name %>
+                            </div>
+                            <div>
+                                <strong>Relative Details:</strong> <%= form.content.relative_details %>
+                            </div>
+                            <div>
+                                <strong>Consulted Through:</strong> <%= form.content.consulted_through %>
+                            </div>
+                            <div>
+                                <strong>Chief Complaint and Physical Examination:</strong>
+                                <div><%= form.content.chief_complaint %></div>
+                            </div>
+                            <div>
+                                <strong>Impression:</strong>
+                                <div><%= form.content.impression %></div>
+                            </div>
+                            <div>
+                                <strong>Advice:</strong>
+                                <div><%= form.content.advice %></div>
+                            </div>
+                            <div class="mt-2">
+                                <strong>A. Relief For MAJOR DISTRESSING SYMPTOMS:</strong>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Symptom</th>
+                                            <th>Duration</th>
+                                            <th>Intensity/Score</th>
+                                            <th>Drugs Advised/Date</th>
+                                            <th>Route, Dose, Duration, Timing</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (form.content.symptoms && form.content.symptoms.length) { %>
+                                            <% form.content.symptoms.forEach(sym => { %>
+                                                <tr>
+                                                    <td><%= sym.symptom %></td>
+                                                    <td><%= sym.duration %></td>
+                                                    <td><%= sym.intensity %></td>
+                                                    <td><%= sym.drugs %></td>
+                                                    <td><%= sym.route_dose %></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <strong>B. Specialized Personal Care:</strong>
+                                <ul>
+                                    <li>Wound care: <%= form.content.wound_care %></li>
+                                    <li>Oral Care: <%= form.content.oral_care %></li>
+                                    <li>Lymphedema care: <%= form.content.lymphedema_care %></li>
+                                    <li>Nutrition: <%= form.content.nutrition %></li>
+                                    <li>Physiotherapy: <%= form.content.physiotherapy %></li>
+                                    <li>Counselling: <%= form.content.counselling %></li>
+                                    <li>Others: <%= form.content.special_others %></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <strong>C. In case of Need, To Contact:</strong> <%= form.content.contact_in_case_of_need %>
+                            </div>
+                            <div>
+                                <strong>Next Appointment Date:</strong> <%= form.content.next_appointment_date %>
+                            </div>
+                            <div>
+                                <strong>Doctor's Name:</strong> <%= form.content.doctor_name %>
+                            </div>
+                            <div>
+                                <strong>Signature:</strong> <%= form.content.signature %>
+                            </div>
+                            <div>
+                                <strong>Submitted At:</strong> <%= form.createdAt.toLocaleString() %>
+                            </div>
+                            <details class="mt-2">
+                                <summary>Show Full Details</summary>
+                                <pre style="white-space: pre-wrap;"><%= JSON.stringify(form.content, null, 2) %></pre>
+                            </details>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No Level 3 forms available.</p>
+                <% } %>
             </div>
         </div>
     </div>

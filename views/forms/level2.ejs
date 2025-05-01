@@ -21,14 +21,181 @@
     </nav>
 
     <div class="container mt-4">
+        <!-- Success Modal -->
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+              <div class="modal-body">
+                <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
+                </svg>
+                <h4 class="mb-2">Success!</h4>
+                <p>Your form has been submitted.</p>
+                <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+        <% } %>
+
         <div class="card">
             <div class="card-header">
-                <h4>Level 2 Form</h4>
+                <h4>Psycho-Social Assessment Form (Level 2)</h4>
             </div>
             <div class="card-body">
-                <!-- Your Level 2 form will go here -->
                 <form action="/forms/level2/submit" method="POST">
-                    <p>Level 2 Form Content</p>
+                    <!-- Level-1 UID Dropdown -->
+                    <div class="mb-2 row">
+                        <div class="col">
+                            <label for="level1_uid" class="form-label">Select Level-1 UID</label>
+                            <select class="form-control" name="level1_uid" id="level1_uid" required>
+                                <option value="">-- Select UID --</option>
+                                <% if (level1Forms && level1Forms.length > 0) { %>
+                                    <% level1Forms.forEach(f => { %>
+                                        <option value="<%= f.uid %>">
+                                            <%= f.uid %>
+                                            <% if (f.content && f.content.name) { %> - <%= f.content.name %> <% } %>
+                                            <% if (f.content && f.content.age) { %> - <%= f.content.age %> <% } %>
+                                            <% if (f.content && (f.content.sex || f.content.gender)) { %> - <%= f.content.sex || f.content.gender %> <% } %>
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-2 row">
+                        <div class="col">
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="name" id="name" required readonly>
+                        </div>
+                        <div class="col">
+                            <label>Age</label>
+                            <input type="number" class="form-control" name="age" id="age" required readonly>
+                        </div>
+                        <div class="col">
+                            <label>Sex</label>
+                            <input type="text" class="form-control" name="sex" id="sex" required readonly>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label>Diagnosis (first diagnosed on with stage)</label>
+                        <input type="text" class="form-control" name="diagnosis" id="diagnosis" readonly>
+                    </div>
+                    <div class="mb-2">
+                        <label>History of any psychological illnesses (medications if any)</label>
+                        <input type="text" class="form-control" name="psych_illness">
+                    </div>
+                    <div class="mb-2">
+                        <label>History of substance abuse</label>
+                        <input type="text" class="form-control" name="substance_abuse">
+                    </div>
+                    <div class="mb-2">
+                        <label>Occupation</label>
+                        <input type="text" class="form-control" name="occupation">
+                    </div>
+                    <div class="mb-2">
+                        <label>Caregiver relationship with the patient</label>
+                        <input type="text" class="form-control" name="caregiver_relationship">
+                    </div>
+                    <div class="mb-2">
+                        <label>Primary decision maker of the household</label>
+                        <input type="text" class="form-control" name="primary_decision_maker">
+                    </div>
+                    <div class="mb-2">
+                        <label>Genogram</label>
+                        <input type="text" class="form-control" name="genogram">
+                    </div>
+                    <h5 class="mt-4">Collusion</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Patient</th>
+                                <th>Primary Caregiver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Uncertain about the diagnosis</td>
+                                <td><input type="checkbox" name="collusion_patient_uncertain"></td>
+                                <td><input type="checkbox" name="collusion_caregiver_uncertain"></td>
+                            </tr>
+                            <tr>
+                                <td>Only knows about the diagnosis and not the prognosis</td>
+                                <td><input type="checkbox" name="collusion_patient_only_diagnosis"></td>
+                                <td><input type="checkbox" name="collusion_caregiver_only_diagnosis"></td>
+                            </tr>
+                            <tr>
+                                <td>Knows about the diagnosis and the prognosis</td>
+                                <td><input type="checkbox" name="collusion_patient_knows_all"></td>
+                                <td><input type="checkbox" name="collusion_caregiver_knows_all"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h5 class="mt-4">Observation and Impressions</h5>
+                    <div class="mb-2">
+                        <label>Patient's coping mechanism</label>
+                        <input type="text" class="form-control" name="coping_mechanism">
+                    </div>
+                    <div class="mb-2">
+                        <label>Patient’s meaning making of the disease</label>
+                        <input type="text" class="form-control" name="meaning_of_disease">
+                    </div>
+                    <div class="mb-2">
+                        <label>Behaviour with the team</label>
+                        <input type="text" class="form-control" name="behaviour_with_team">
+                    </div>
+                    <div class="mb-2">
+                        <label>Signature of Counsellor</label>
+                        <input type="text" class="form-control" name="counsellor_signature">
+                    </div>
+
+                    <!-- Follow-up Counselling Notes -->
+                    <h5 class="mt-4">Follow-up Counselling Notes</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Follow-up Date</th>
+                                <th>Details of Follow-up Sessions</th>
+                                <th>Time and Signature</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0;i<3;i++){ %>
+                            <tr>
+                                <td><input type="date" class="form-control" name="followup_notes[<%= i %>][date]"></td>
+                                <td><input type="text" class="form-control" name="followup_notes[<%= i %>][details]"></td>
+                                <td><input type="text" class="form-control" name="followup_notes[<%= i %>][signature]"></td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+
+                    <!-- Psycho-Social Assessment Form: Plan and Interventions -->
+                    <h5 class="mt-4">Psycho-Social Assessment Form: Plan and Interventions</h5>
+                    <div class="mb-2">
+                        <label>Presenting Concerns</label>
+                        <textarea class="form-control" name="plan_presenting_concerns" rows="2"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label>Session Notes and Intervention Used</label>
+                        <textarea class="form-control" name="plan_session_notes" rows="2"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label>Patient's Wish</label>
+                        <textarea class="form-control" name="plan_patient_wish" rows="2"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label>Follow Up Plan</label>
+                        <textarea class="form-control" name="plan_followup_plan" rows="2"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label>Signature</label>
+                        <input type="text" class="form-control" name="plan_signature">
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3">Submit</button>
                 </form>
             </div>
         </div>
@@ -55,6 +222,26 @@
             if (event.key === 'logout-event') {
                 window.location.href = '/auth/login'; // Redirect to login page
             }
+        });
+
+        // Auto-fill logic for Level-1 UID
+        document.getElementById('level1_uid').addEventListener('change', function() {
+            var uid = this.value;
+            if (!uid) {
+                document.getElementById('name').value = '';
+                document.getElementById('age').value = '';
+                document.getElementById('sex').value = '';
+                document.getElementById('diagnosis').value = '';
+                return;
+            }
+            fetch('/forms/level1/details/' + uid)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('age').value = data.age || '';
+                    document.getElementById('sex').value = data.sex || '';
+                    document.getElementById('diagnosis').value = data.diagnosis || '';
+                });
         });
     </script>
 </body>

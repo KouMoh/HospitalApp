@@ -21,16 +21,153 @@
     </nav>
 
     <div class="container mt-4">
+        <!-- Success Modal -->
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+              <div class="modal-body">
+                <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
+                </svg>
+                <h4 class="mb-2">Success!</h4>
+                <p>Your form has been submitted.</p>
+                <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+        <% } %>
+
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Level 3 Form</h4>
+                        <h4>OPD/Tele-consultation/Video-consultation/Home Care Record (Level 3)</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Your Level 3 form will go here -->
                         <form action="/forms/level3/submit" method="POST">
-                            <p>Level 3 Form Content</p>
+                            <!-- Level-1 UID Dropdown -->
+                            <div class="mb-3 row">
+                                <div class="col">
+                                    <label for="level1_uid" class="form-label">Select Level-1 UID (Case Record)</label>
+                                    <select class="form-control" name="level1_uid" id="level1_uid" required>
+                                        <option value="">-- Select UID --</option>
+                                        <% if (level1Forms && level1Forms.length > 0) { %>
+                                            <% level1Forms.forEach(f => { %>
+                                                <option value="<%= f.uid %>">
+                                                    <%= f.uid %> <% if(f.content && f.content.name) { %> - <%= f.content.name %> <% } %>
+                                                </option>
+                                            <% }); %>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label>Date</label>
+                                    <input type="date" class="form-control" name="date" value="<%= new Date().toISOString().slice(0,10) %>" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label>Patient / Relative Name</label>
+                                <input type="text" class="form-control" name="patient_name" required>
+                            </div>
+                            <div class="mb-2">
+                                <label>If Relative, Relation and Contact Details</label>
+                                <input type="text" class="form-control" name="relative_details">
+                            </div>
+                            <div class="mb-2">
+                                <label>Consulted through</label>
+                                <select class="form-control" name="consulted_through">
+                                    <option>OPD</option>
+                                    <option>Tele-consultation</option>
+                                    <option>Video-Consultation</option>
+                                    <option>Home visit</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label>Chief Complaint and Physical Examination</label>
+                                <textarea class="form-control" name="chief_complaint" rows="2"></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label>Impression</label>
+                                <textarea class="form-control" name="impression" rows="2"></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label>Advice</label>
+                                <textarea class="form-control" name="advice" rows="2"></textarea>
+                            </div>
+                            <h5 class="mt-4">A. Relief For MAJOR DISTRESSING SYMPTOMS</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Symptom (To Note)</th>
+                                        <th>Duration (Days / Weeks)</th>
+                                        <th>Intensity / Score</th>
+                                        <th>Drugs Advised / Date</th>
+                                        <th>Route, Dose, Duration, Timing</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(let i=0;i<5;i++){ %>
+                                    <tr>
+                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][symptom]"></td>
+                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][duration]"></td>
+                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][intensity]"></td>
+                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][drugs]"></td>
+                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][route_dose]"></td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <h5 class="mt-4">B. Specialized Personal Care (if any)</h5>
+                            <div class="mb-2">
+                                <label>a. Wound care</label>
+                                <input type="text" class="form-control" name="wound_care">
+                            </div>
+                            <div class="mb-2">
+                                <label>b. Oral Care</label>
+                                <input type="text" class="form-control" name="oral_care">
+                            </div>
+                            <div class="mb-2">
+                                <label>c. Lymphedema care</label>
+                                <input type="text" class="form-control" name="lymphedema_care">
+                            </div>
+                            <div class="mb-2">
+                                <label>d. Nutrition</label>
+                                <input type="text" class="form-control" name="nutrition">
+                            </div>
+                            <div class="mb-2">
+                                <label>e. Physiotherapy</label>
+                                <input type="text" class="form-control" name="physiotherapy">
+                            </div>
+                            <div class="mb-2">
+                                <label>f. Counselling</label>
+                                <input type="text" class="form-control" name="counselling">
+                            </div>
+                            <div class="mb-2">
+                                <label>g. Others</label>
+                                <input type="text" class="form-control" name="special_others">
+                            </div>
+                            <div class="mb-2">
+                                <label>C. In case of Need, To Contact</label>
+                                <input type="text" class="form-control" name="contact_in_case_of_need">
+                            </div>
+                            <div class="mb-2 row">
+                                <div class="col">
+                                    <label>Next Appointment Date</label>
+                                    <input type="date" class="form-control" name="next_appointment_date">
+                                </div>
+                                <div class="col">
+                                    <label>Doctor's Name</label>
+                                    <input type="text" class="form-control" name="doctor_name">
+                                </div>
+                                <div class="col">
+                                    <label>Signature</label>
+                                    <input type="text" class="form-control" name="signature">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger mt-3">Submit</button>
                         </form>
                     </div>
                 </div>

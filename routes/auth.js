@@ -23,6 +23,7 @@ router.post('/login', async (req, res) => {
         if (user) {
             req.session.username = user.username; // Set session username
             req.session.userLevel = user.level;  // Set session level
+            req.session.save(); // Ensure session is saved
             res.json({
                 success: true,
                 username: user.username,
