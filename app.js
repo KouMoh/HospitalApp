@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session'); // Import session middleware
 const path = require('path'); // Import path module
+const MongoStore = require('connect-mongo'); // Add this line
 
 const app = express();
 
@@ -23,7 +24,16 @@ app.use(session({
     secret: process.env.SESSION_SECRET, // Use a secret from your .env file
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set secure: true if using HTTPS
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // true on Vercel
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000 // 1 day (adjust as needed)
+    }
 }));
 
 // Disable caching to prevent back button access after logout
