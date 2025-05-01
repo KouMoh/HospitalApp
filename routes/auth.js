@@ -13,12 +13,8 @@ router.get('/admin-login', (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { username, password, level } = req.body;
-        const user = await User.findOne({ 
-            username, 
-            password, 
-            level: parseInt(level) 
-        });
+        const { username, password } = req.body;
+        const user = await User.findOne({ username, password });
         
         if (user) {
             req.session.username = user.username; // Set session username
