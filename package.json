@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "init-admin": "node scripts/initAdmin.js"
+    "init-admin": "node scripts/initAdmin.js",
+    "vercel-build": "npm install"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

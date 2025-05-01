@@ -51,5 +51,5 @@ app.use((req, res) => {
     res.redirect('/auth/login');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // Ensure PORT is dynamically assigned
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
