@@ -5,7 +5,9 @@
     <meta http-equiv="Cache-Control" content="no-store" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
     <style>
         body { background: #f7f9fb; }
         .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #eee; }
@@ -49,7 +51,7 @@
             <main class="col-md-10 ms-sm-auto px-4 pt-4">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Read-Only Level 3 Forms</h4>
+                        <h4>OPD/ Doctor Submissions</h4>
                     </div>
                     <div class="card-body">
                         <% if (forms && forms.length > 0) { %>
@@ -83,30 +85,32 @@
                                     </div>
                                     <div class="mt-2">
                                         <strong>A. Relief For MAJOR DISTRESSING SYMPTOMS:</strong>
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Symptom</th>
-                                                    <th>Duration</th>
-                                                    <th>Intensity/Score</th>
-                                                    <th>Drugs Advised/Date</th>
-                                                    <th>Route, Dose, Duration, Timing</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% if (form.content.symptoms && form.content.symptoms.length) { %>
-                                                    <% form.content.symptoms.forEach(sym => { %>
-                                                        <tr>
-                                                            <td><%= sym.symptom %></td>
-                                                            <td><%= sym.duration %></td>
-                                                            <td><%= sym.intensity %></td>
-                                                            <td><%= sym.drugs %></td>
-                                                            <td><%= sym.route_dose %></td>
-                                                        </tr>
-                                                    <% }); %>
-                                                <% } %>
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Symptom</th>
+                                                        <th>Duration</th>
+                                                        <th>Intensity/Score</th>
+                                                        <th>Drugs Advised/Date</th>
+                                                        <th>Route, Dose, Duration, Timing</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% if (form.content.symptoms && form.content.symptoms.length) { %>
+                                                        <% form.content.symptoms.forEach(sym => { %>
+                                                            <tr>
+                                                                <td><%= sym.symptom %></td>
+                                                                <td><%= sym.duration %></td>
+                                                                <td><%= sym.intensity %></td>
+                                                                <td><%= sym.drugs %></td>
+                                                                <td><%= sym.route_dose %></td>
+                                                            </tr>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div>
                                         <strong>B. Specialized Personal Care:</strong>
