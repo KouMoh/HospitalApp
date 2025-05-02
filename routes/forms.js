@@ -226,4 +226,25 @@ router.get('/dashboard/level3', isAuthenticated, async (req, res) => {
     });
 });
 
+// Placeholder for Subsequent Follow Up and Report routes for all levels
+router.get('/followup/level:level', isAuthenticated, (req, res) => {
+    const level = parseInt(req.params.level, 10);
+    if (![1, 2, 3].includes(level)) return res.status(404).send('Not found');
+    res.render('forms/placeholder', {
+        username: req.session.username,
+        level,
+        title: 'Subsequent Follow Up (Coming Soon)'
+    });
+});
+
+router.get('/report/level:level', isAuthenticated, (req, res) => {
+    const level = parseInt(req.params.level, 10);
+    if (![1, 2, 3].includes(level)) return res.status(404).send('Not found');
+    res.render('forms/placeholder', {
+        username: req.session.username,
+        level,
+        title: 'Report (Coming Soon)'
+    });
+});
+
 module.exports = router;

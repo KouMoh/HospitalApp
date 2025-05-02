@@ -31,9 +31,21 @@
             <!-- Sidebar -->
             <nav class="col-md-2 sidebar pt-4">
                 <div class="list-group">
-                    <a href="/forms/dashboard/level2" class="list-group-item list-group-item-action">Dashboard</a>
-                    <a href="/forms/level2" class="list-group-item list-group-item-action active">New Patient Case</a>
-                    <a href="/forms/view/level2" class="list-group-item list-group-item-action">All Patients</a>
+                    <a href="/forms/dashboard/level2" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#8962;</span> Dashboard
+                    </a>
+                    <a href="/forms/level2" class="list-group-item list-group-item-action active">
+                        <span class="me-2">+</span> New Patient Case
+                    </a>
+                    <a href="/forms/view/level2" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128101;</span> All Patients
+                    </a>
+                    <a href="/forms/followup/level2" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128197;</span> Subsequent Follow Up
+                    </a>
+                    <a href="/forms/report/level2" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128202;</span> Report
+                    </a>
                 </div>
             </nav>
             <!-- Main Content -->
@@ -60,7 +72,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h4>Psycho-Social Assessment Form (Level 2)</h4>
+                            <h4>Psycho-Social Assessment Form</h4>
                         </div>
                         <div class="card-body">
                             <form action="/forms/level2/submit" method="POST">

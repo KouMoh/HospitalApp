@@ -31,16 +31,28 @@
             <!-- Sidebar -->
             <nav class="col-md-2 sidebar pt-4">
                 <div class="list-group">
-                    <a href="/forms/dashboard/level1" class="list-group-item list-group-item-action">Dashboard</a>
-                    <a href="/forms/level1" class="list-group-item list-group-item-action">New Patient Case</a>
-                    <a href="/forms/view/level1" class="list-group-item list-group-item-action active">All Patients</a>
+                    <a href="/forms/dashboard/level1" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#8962;</span> Dashboard
+                    </a>
+                    <a href="/forms/level1" class="list-group-item list-group-item-action">
+                        <span class="me-2">+</span> New Patient Case
+                    </a>
+                    <a href="/forms/view/level1" class="list-group-item list-group-item-action active">
+                        <span class="me-2">&#128101;</span> All Patients
+                    </a>
+                    <a href="/forms/followup/level1" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128197;</span> Subsequent Follow Up
+                    </a>
+                    <a href="/forms/report/level1" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128202;</span> Report
+                    </a>
                 </div>
             </nav>
             <!-- Main Content -->
             <main class="col-md-10 ms-sm-auto px-4 pt-4">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Read-Only Level 1 Forms</h4>
+                        <h4>Case-Record Entry</h4>
                     </div>
                     <div class="card-body">
                         <a href="/forms/level3" class="btn btn-outline-primary mb-3">&larr; Back to Form</a>
@@ -223,7 +235,7 @@
                                 <h6 class="mt-3">11. Symptoms as on Date</h6>
                                 <div class="mb-2"><%= c.symptoms %></div>
 
-                                <div class="mb-2"><strong>Submitted At:</strong> <%= form.createdAt.toLocaleString() %></div>
+                                <div class="mb-2"><strong>Submitted At:</strong> <span class="submitted-at" data-utc="<%= form.createdAt.toISOString() %>"></span></div>
                             </div>
                             <% }); %>
                         <% } else { %>
@@ -254,6 +266,15 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'logout-event') {
                 window.location.href = '/auth/login';
+            }
+        });
+
+        // Convert UTC date to local time for all .submitted-at elements
+        document.querySelectorAll('.submitted-at').forEach(function(el) {
+            const utc = el.getAttribute('data-utc');
+            if (utc) {
+                const d = new Date(utc);
+                el.textContent = d.toLocaleString();
             }
         });
     </script>

@@ -14,6 +14,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true,
         enum: [1, 2, 3]
+    },
+    lastLoginAt: {
+        type: Date,
+        default: null
+    },
+    lastLogoutAt: {
+        type: Date,
+        default: null
     }
 });
 

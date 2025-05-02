@@ -22,6 +22,10 @@ router.post('/login', async (req, res) => {
             req.session.username = user.username;
             req.session.userLevel = user.level;
             req.session.save();
+
+            user.lastLoginAt = new Date();
+            await user.save();
+
             res.json({
                 success: true,
                 username: user.username,
@@ -64,15 +68,28 @@ router.get('/logout', (req, res) => {
     });
 });
 
-router.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.status(500).json({ success: false, message: 'Logout failed' });
+router.post('/logout', async (req, res) => {
+    try {
+        if (req.session.username) {
+            const user = await User.findOne({ username: req.session.username });
+            if (user) {
+                user.lastLogoutAt = new Date();
+                await user.save();
+            }
         }
-        res.clearCookie('connect.sid'); // Clear session cookie
-        res.json({ success: true, message: 'Logged out successfully' });
-    });
+
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).json({ success: false, message: 'Logout failed' });
+            }
+            res.clearCookie('connect.sid'); // Clear session cookie
+            res.json({ success: true, message: 'Logged out successfully' });
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({ success: false, message: 'Logout failed' });
+    }
 });
 
 module.exports = router;

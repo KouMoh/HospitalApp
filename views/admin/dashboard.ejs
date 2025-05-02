@@ -56,6 +56,8 @@
                         <tr>
                             <th>Username</th>
                             <th>Level</th>
+                            <th>Last Login</th>
+                            <th>Last Logout</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -64,6 +66,12 @@
                             <tr>
                                 <td><%= user.username %></td>
                                 <td>Level <%= user.level %></td>
+                                <td>
+                                    <%= user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never' %>
+                                </td>
+                                <td>
+                                    <%= user.lastLogoutAt ? new Date(user.lastLogoutAt).toLocaleString() : 'Never' %>
+                                </td>
                                 <td>
                                     <form action="/admin/delete-user/<%= user._id %>" method="POST" style="display: inline;">
                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
