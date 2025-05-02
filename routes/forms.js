@@ -130,12 +130,16 @@ router.post('/level1/submit', isAuthenticated, async (req, res) => {
 
 // Level-3: Read-only view for Level-1 forms
 router.get('/view/level1', isAuthenticated, (req, res, next) => {
-    req.params.level = 1; // Explicitly set the requested level
+    req.params.level = 1;
     next();
 }, checkViewAccess, async (req, res) => {
     try {
-        const forms = await Form.find({ level: 1 }).sort({ createdAt: -1 }); // Fetch Level 1 forms
-        res.render('forms/view-level1', { username: req.session.username, forms });
+        let query = { level: 1 };
+        if (req.query.uid) {
+            query.uid = req.query.uid;
+        }
+        const forms = await Form.find(query).sort({ createdAt: -1 });
+        res.render('forms/view-level1', { username: req.session.username, forms, uid: req.query.uid || '' });
     } catch (error) {
         console.error('Error fetching Level 1 forms:', error);
         res.redirect('/auth/login');
@@ -143,12 +147,16 @@ router.get('/view/level1', isAuthenticated, (req, res, next) => {
 });
 
 router.get('/view/level2', isAuthenticated, (req, res, next) => {
-    req.params.level = 2; // Explicitly set the requested level
+    req.params.level = 2;
     next();
 }, checkViewAccess, async (req, res) => {
     try {
-        const forms = await Form.find({ level: 2 }); // Fetch Level 2 forms
-        res.render('forms/view-level2', { username: req.session.username, forms });
+        let query = { level: 2 };
+        if (req.query.uid) {
+            query['content.level1_uid'] = req.query.uid;
+        }
+        const forms = await Form.find(query);
+        res.render('forms/view-level2', { username: req.session.username, forms, uid: req.query.uid || '' });
     } catch (error) {
         console.error('Error fetching Level 2 forms:', error);
         res.redirect('/auth/login');
@@ -168,6 +176,54 @@ router.get('/view/level3', isAuthenticated, (req, res, next) => {
         console.error('Error fetching Level 3 forms for Level 1 view:', error);
         res.redirect('/auth/login');
     }
+});
+
+// Dashboard for Level 1
+router.get('/dashboard/level1', isAuthenticated, async (req, res) => {
+    if (req.session.userLevel !== 1) return res.redirect('/auth/login');
+    // Only consider UIDs from Level-1 forms
+    const totalPatients = await Form.distinct('uid', { level: 1 }).then(arr => arr.filter(Boolean).length);
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const newThisMonth = await Form.distinct('uid', { level: 1, createdAt: { $gte: monthStart } }).then(arr => arr.filter(Boolean).length);
+    res.render('dashboard-level1', {
+        username: req.session.username,
+        totalPatients,
+        newThisMonth,
+        activeCases: totalPatients
+    });
+});
+
+// Dashboard for Level 2
+router.get('/dashboard/level2', isAuthenticated, async (req, res) => {
+    if (req.session.userLevel !== 2) return res.redirect('/auth/login');
+    // Always count unique UIDs from Level-1 for total patients
+    const totalPatients = await Form.distinct('uid', { level: 1 }).then(arr => arr.filter(Boolean).length);
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const newThisMonth = await Form.distinct('uid', { level: 1, createdAt: { $gte: monthStart } }).then(arr => arr.filter(Boolean).length);
+    res.render('dashboard-level2', {
+        username: req.session.username,
+        totalPatients,
+        newThisMonth,
+        activeCases: totalPatients
+    });
+});
+
+// Dashboard for Level 3
+router.get('/dashboard/level3', isAuthenticated, async (req, res) => {
+    if (req.session.userLevel !== 3) return res.redirect('/auth/login');
+    // Always count unique UIDs from Level-1 for total patients
+    const totalPatients = await Form.distinct('uid', { level: 1 }).then(arr => arr.filter(Boolean).length);
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const newThisMonth = await Form.distinct('uid', { level: 1, createdAt: { $gte: monthStart } }).then(arr => arr.filter(Boolean).length);
+    res.render('dashboard-level3', {
+        username: req.session.username,
+        totalPatients,
+        newThisMonth,
+        activeCases: totalPatients
+    });
 });
 
 module.exports = router;

@@ -4,185 +4,206 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Level 3 Dashboard</title>
+    <title>Level 3 OPD/Teleconsultation Record</title>
     <meta http-equiv="Cache-Control" content="no-store" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f7f9fb; }
+        .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #eee; }
+        .sidebar .list-group-item.active { background: #ffe7e7; color: #d32f2f; border: none; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <span class="navbar-brand">Level 3 Dashboard</span>
-            <div class="navbar-nav ms-auto">
-                <a href="#" id="logout" class="nav-link">Logout</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">Amrit Dhara Palliative Care</span>
+            <div>
+                <span class="me-3">Welcome, <%= username %></span>
+                <a href="#" id="logout" class="btn btn-link">Sign out</a>
             </div>
         </div>
     </nav>
-
-    <div class="container mt-4">
-        <!-- Success Modal -->
-        <% if (typeof success !== 'undefined' && success) { %>
-        <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-              <div class="modal-body">
-                <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
-                </svg>
-                <h4 class="mb-2">Success!</h4>
-                <p>Your form has been submitted.</p>
-                <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-backdrop fade show"></div>
-        <% } %>
-
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>OPD/Tele-consultation/Video-consultation/Home Care Record (Level 3)</h4>
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar pt-4">
+                <div class="list-group">
+                    <a href="/forms/dashboard/level3" class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="/forms/level3" class="list-group-item list-group-item-action active">New Patient Case</a>
+                    <a href="/forms/view/level3" class="list-group-item list-group-item-action">All Patients</a>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-4 pt-4">
+                <div class="container mt-4">
+                    <!-- Success Modal -->
+                    <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content text-center">
+                          <div class="modal-body">
+                            <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
+                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
+                            </svg>
+                            <h4 class="mb-2">Success!</h4>
+                            <p>Your form has been submitted.</p>
+                            <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="card-body">
-                        <form action="/forms/level3/submit" method="POST">
-                            <!-- Level-1 UID Dropdown -->
-                            <div class="mb-3 row">
-                                <div class="col">
-                                    <label for="level1_uid" class="form-label">Select Level-1 UID (Case Record)</label>
-                                    <select class="form-control" name="level1_uid" id="level1_uid" required>
-                                        <option value="">-- Select UID --</option>
-                                        <% if (level1Forms && level1Forms.length > 0) { %>
-                                            <% level1Forms.forEach(f => { %>
-                                                <option value="<%= f.uid %>">
-                                                    <%= f.uid %> <% if(f.content && f.content.name) { %> - <%= f.content.name %> <% } %>
-                                                </option>
-                                            <% }); %>
-                                        <% } %>
-                                    </select>
+                    <div class="modal-backdrop fade show"></div>
+                    <% } %>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>OPD/Tele-consultation/Video-consultation/Home Care Record (Level 3)</h4>
                                 </div>
-                                <div class="col">
-                                    <label>Date</label>
-                                    <input type="date" class="form-control" name="date" value="<%= new Date().toISOString().slice(0,10) %>" required>
+                                <div class="card-body">
+                                    <form action="/forms/level3/submit" method="POST">
+                                        <!-- Level-1 UID Dropdown -->
+                                        <div class="mb-3 row">
+                                            <div class="col">
+                                                <label for="level1_uid" class="form-label">Select Level-1 UID (Case Record)</label>
+                                                <select class="form-control" name="level1_uid" id="level1_uid" required>
+                                                    <option value="">-- Select UID --</option>
+                                                    <% if (level1Forms && level1Forms.length > 0) { %>
+                                                        <% level1Forms.forEach(f => { %>
+                                                            <option value="<%= f.uid %>">
+                                                                <%= f.uid %> <% if(f.content && f.content.name) { %> - <%= f.content.name %> <% } %>
+                                                            </option>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </select>
+                                            </div>
+                                            <div class="col">
+                                                <label>Date</label>
+                                                <input type="date" class="form-control" name="date" value="<%= new Date().toISOString().slice(0,10) %>" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Patient / Relative Name</label>
+                                            <input type="text" class="form-control" name="patient_name" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>If Relative, Relation and Contact Details</label>
+                                            <input type="text" class="form-control" name="relative_details">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Consulted through</label>
+                                            <select class="form-control" name="consulted_through">
+                                                <option>OPD</option>
+                                                <option>Tele-consultation</option>
+                                                <option>Video-Consultation</option>
+                                                <option>Home visit</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Chief Complaint and Physical Examination</label>
+                                            <textarea class="form-control" name="chief_complaint" rows="2"></textarea>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Impression</label>
+                                            <textarea class="form-control" name="impression" rows="2"></textarea>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Advice</label>
+                                            <textarea class="form-control" name="advice" rows="2"></textarea>
+                                        </div>
+                                        <h5 class="mt-4">A. Relief For MAJOR DISTRESSING SYMPTOMS</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Symptom (To Note)</th>
+                                                    <th>Duration (Days / Weeks)</th>
+                                                    <th>Intensity / Score</th>
+                                                    <th>Drugs Advised / Date</th>
+                                                    <th>Route, Dose, Duration, Timing</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% for(let i=0;i<5;i++){ %>
+                                                <tr>
+                                                    <td><input type="text" class="form-control" name="symptoms[<%= i %>][symptom]"></td>
+                                                    <td><input type="text" class="form-control" name="symptoms[<%= i %>][duration]"></td>
+                                                    <td><input type="text" class="form-control" name="symptoms[<%= i %>][intensity]"></td>
+                                                    <td><input type="text" class="form-control" name="symptoms[<%= i %>][drugs]"></td>
+                                                    <td><input type="text" class="form-control" name="symptoms[<%= i %>][route_dose]"></td>
+                                                </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                        <h5 class="mt-4">B. Specialized Personal Care (if any)</h5>
+                                        <div class="mb-2">
+                                            <label>a. Wound care</label>
+                                            <input type="text" class="form-control" name="wound_care">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>b. Oral Care</label>
+                                            <input type="text" class="form-control" name="oral_care">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>c. Lymphedema care</label>
+                                            <input type="text" class="form-control" name="lymphedema_care">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>d. Nutrition</label>
+                                            <input type="text" class="form-control" name="nutrition">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>e. Physiotherapy</label>
+                                            <input type="text" class="form-control" name="physiotherapy">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>f. Counselling</label>
+                                            <input type="text" class="form-control" name="counselling">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>g. Others</label>
+                                            <input type="text" class="form-control" name="special_others">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>C. In case of Need, To Contact</label>
+                                            <input type="text" class="form-control" name="contact_in_case_of_need">
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Next Appointment Date</label>
+                                                <input type="date" class="form-control" name="next_appointment_date">
+                                            </div>
+                                            <div class="col">
+                                                <label>Doctor's Name</label>
+                                                <input type="text" class="form-control" name="doctor_name">
+                                            </div>
+                                            <div class="col">
+                                                <label>Signature</label>
+                                                <input type="text" class="form-control" name="signature">
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger mt-3">Submit</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label>Patient / Relative Name</label>
-                                <input type="text" class="form-control" name="patient_name" required>
-                            </div>
-                            <div class="mb-2">
-                                <label>If Relative, Relation and Contact Details</label>
-                                <input type="text" class="form-control" name="relative_details">
-                            </div>
-                            <div class="mb-2">
-                                <label>Consulted through</label>
-                                <select class="form-control" name="consulted_through">
-                                    <option>OPD</option>
-                                    <option>Tele-consultation</option>
-                                    <option>Video-Consultation</option>
-                                    <option>Home visit</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Chief Complaint and Physical Examination</label>
-                                <textarea class="form-control" name="chief_complaint" rows="2"></textarea>
-                            </div>
-                            <div class="mb-2">
-                                <label>Impression</label>
-                                <textarea class="form-control" name="impression" rows="2"></textarea>
-                            </div>
-                            <div class="mb-2">
-                                <label>Advice</label>
-                                <textarea class="form-control" name="advice" rows="2"></textarea>
-                            </div>
-                            <h5 class="mt-4">A. Relief For MAJOR DISTRESSING SYMPTOMS</h5>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Symptom (To Note)</th>
-                                        <th>Duration (Days / Weeks)</th>
-                                        <th>Intensity / Score</th>
-                                        <th>Drugs Advised / Date</th>
-                                        <th>Route, Dose, Duration, Timing</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(let i=0;i<5;i++){ %>
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][symptom]"></td>
-                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][duration]"></td>
-                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][intensity]"></td>
-                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][drugs]"></td>
-                                        <td><input type="text" class="form-control" name="symptoms[<%= i %>][route_dose]"></td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                            <h5 class="mt-4">B. Specialized Personal Care (if any)</h5>
-                            <div class="mb-2">
-                                <label>a. Wound care</label>
-                                <input type="text" class="form-control" name="wound_care">
-                            </div>
-                            <div class="mb-2">
-                                <label>b. Oral Care</label>
-                                <input type="text" class="form-control" name="oral_care">
-                            </div>
-                            <div class="mb-2">
-                                <label>c. Lymphedema care</label>
-                                <input type="text" class="form-control" name="lymphedema_care">
-                            </div>
-                            <div class="mb-2">
-                                <label>d. Nutrition</label>
-                                <input type="text" class="form-control" name="nutrition">
-                            </div>
-                            <div class="mb-2">
-                                <label>e. Physiotherapy</label>
-                                <input type="text" class="form-control" name="physiotherapy">
-                            </div>
-                            <div class="mb-2">
-                                <label>f. Counselling</label>
-                                <input type="text" class="form-control" name="counselling">
-                            </div>
-                            <div class="mb-2">
-                                <label>g. Others</label>
-                                <input type="text" class="form-control" name="special_others">
-                            </div>
-                            <div class="mb-2">
-                                <label>C. In case of Need, To Contact</label>
-                                <input type="text" class="form-control" name="contact_in_case_of_need">
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Next Appointment Date</label>
-                                    <input type="date" class="form-control" name="next_appointment_date">
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Quick Links</h4>
                                 </div>
-                                <div class="col">
-                                    <label>Doctor's Name</label>
-                                    <input type="text" class="form-control" name="doctor_name">
-                                </div>
-                                <div class="col">
-                                    <label>Signature</label>
-                                    <input type="text" class="form-control" name="signature">
+                                <div class="card-body">
+                                    <a href="#" id="view-level1-link" class="btn btn-secondary w-100 mb-2">View Level 1 Form</a>
+                                    <a href="#" id="view-level2-link" class="btn btn-secondary w-100">View Level 2 Form</a>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-danger mt-3">Submit</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Quick Links</h4>
-                    </div>
-                    <div class="card-body">
-                        <a href="/forms/view/level1" class="btn btn-secondary w-100 mb-2">View Level 1 Forms</a>
-                        <a href="/forms/view/level2" class="btn btn-secondary w-100">View Level 2 Forms</a>
-                    </div>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
@@ -206,6 +227,55 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'logout-event') {
                 window.location.href = '/auth/login'; // Redirect to login page
+            }
+        });
+
+        // Quick Links for Level 1 and Level 2 forms for the selected UID
+        document.addEventListener('DOMContentLoaded', function() {
+            function getSelectedUID() {
+                var sel = document.getElementById('level1_uid');
+                return sel ? sel.value : '';
+            }
+            document.getElementById('view-level1-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                var uid = getSelectedUID();
+                if (uid) {
+                    window.location.href = '/forms/view/level1?uid=' + encodeURIComponent(uid);
+                } else {
+                    alert('Please select a Level-1 UID first.');
+                }
+            });
+            document.getElementById('view-level2-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                var uid = getSelectedUID();
+                if (uid) {
+                    window.location.href = '/forms/view/level2?uid=' + encodeURIComponent(uid);
+                } else {
+                    alert('Please select a Level-1 UID first.');
+                }
+            });
+        });
+
+        // Prevent success modal from showing again on browser back
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.search.includes('success=1')) {
+                // Remove ?success=1 from URL without reloading
+                if (window.history.replaceState) {
+                    const url = window.location.pathname + window.location.search.replace(/([?&])success=1(&)?/, function(match, p1, p2) {
+                        if (p1 === '?' && !p2) return '';
+                        if (p1 === '?' && p2) return '?';
+                        if (p1 === '&') return p2 ? '&' : '';
+                        return '';
+                    }).replace(/[?&]$/, '');
+                    window.history.replaceState({}, document.title, url);
+                }
+            }
+        });
+
+        // Prevent showing stale form on browser back/forward navigation
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                window.location.reload();
             }
         });
     </script>

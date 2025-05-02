@@ -4,453 +4,490 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Level 1 Dashboard</title>
+    <title>Level 1 Case Record Form</title>
     <meta http-equiv="Cache-Control" content="no-store" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f7f9fb; }
+        .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #eee; }
+        .sidebar .list-group-item.active { background: #e7f1ff; color: #1976d2; border: none; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <span class="navbar-brand">Level 1 Dashboard</span>
-            <div class="navbar-nav ms-auto">
-                <a href="#" id="logout" class="nav-link">Logout</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">Amrit Dhara Palliative Care</span>
+            <div>
+                <span class="me-3">Welcome, <%= username %></span>
+                <a href="#" id="logout" class="btn btn-link">Sign out</a>
             </div>
         </div>
     </nav>
-
-    <div class="container mt-4">
-        <!-- Success Modal -->
-        <% if (typeof success !== 'undefined' && success) { %>
-        <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-              <div class="modal-body">
-                <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
-                </svg>
-                <h4 class="mb-2">Success!</h4>
-                <p>Your form has been submitted.</p>
-                <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-backdrop fade show"></div>
-        <% } %>
-
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Level 1 Case Record Form</h4>
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar pt-4">
+                <div class="list-group">
+                    <a href="/forms/dashboard/level1" class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="/forms/level1" class="list-group-item list-group-item-action active">New Patient Case</a>
+                    <a href="/forms/view/level1" class="list-group-item list-group-item-action">All Patients</a>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-4 pt-4">
+                <div class="container mt-4">
+                    <!-- Success Modal -->
+                    <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content text-center">
+                          <div class="modal-body">
+                            <svg width="80" height="80" fill="green" class="mb-3" viewBox="0 0 16 16">
+                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 11.414l5.707-5.707-1.414-1.414L7 8.586 4.707 6.293 3.293 7.707 7 11.414z"/>
+                            </svg>
+                            <h4 class="mb-2">Success!</h4>
+                            <p>Your form has been submitted.</p>
+                            <button class="btn btn-success" onclick="window.location.href=window.location.pathname">OK</button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="card-body">
-                        <form action="/forms/level1/submit?success=1" method="POST">
-                            <!-- UID Field -->
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>UID (ADPCT No.)</label>
-                                    <input type="text" class="form-control" name="uid" value="<%= uid %>" readonly required>
-                                </div>
-                                <div class="col">
-                                    <label>Date</label>
-                                    <input type="text" class="form-control" value="<%= new Date().toLocaleDateString() %>" readonly>
-                                </div>
-                            </div>
-                            <!-- 1. PATIENT'S DEMOGRAPHIC DETAILS -->
-                            <h5>1. Patient's Demographic Details</h5>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Name</label>
-                                    <input type="text" class="form-control" name="name" required>
-                                </div>
-                                <div class="col">
-                                    <label>Age</label>
-                                    <input type="number" class="form-control" name="age" required>
-                                </div>
-                                <div class="col">
-                                    <label>Gender</label>
-                                    <select class="form-control" name="gender" required>
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Monthly Income (Rs.)</label>
-                                    <input type="number" class="form-control" name="monthly_income">
-                                </div>
-                                <div class="col">
-                                    <label>Family Monthly Income (Rs.)</label>
-                                    <input type="number" class="form-control" name="family_monthly_income">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Patient's Occupation/Job</label>
-                                    <input type="text" class="form-control" name="occupation">
-                                </div>
-                                <div class="col">
-                                    <label>Education</label>
-                                    <input type="text" class="form-control" name="education">
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <label>Address (Permanent)</label>
-                                <input type="text" class="form-control" name="address_permanent">
-                            </div>
-                            <div class="mb-2">
-                                <label>Address (Present)</label>
-                                <input type="text" class="form-control" name="address_present">
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Contact Phone No.</label>
-                                    <input type="text" class="form-control" name="contact_phone">
-                                </div>
-                                <div class="col">
-                                    <label>Alternate No.</label>
-                                    <input type="text" class="form-control" name="alternate_phone">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Accompanying Caregiver</label>
-                                    <input type="text" class="form-control" name="caregiver">
-                                </div>
-                                <div class="col">
-                                    <label>Other Significant Detail</label>
-                                    <input type="text" class="form-control" name="other_significant_detail">
-                                </div>
-                            </div>
+                    <div class="modal-backdrop fade show"></div>
+                    <% } %>
 
-                            <!-- 2. MEDICAL HISTORY -->
-                            <h5 class="mt-4">2. Medical History</h5>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Diagnosis</label>
-                                    <input type="text" class="form-control" name="diagnosis">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Level 1 Case Record Form</h4>
                                 </div>
-                                <div class="col">
-                                    <label>Site (e.g. Head & Neck, Breast, Lung)</label>
-                                    <input type="text" class="form-control" name="site">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Stage (T)</label>
-                                    <input type="text" class="form-control" name="stage_t">
-                                </div>
-                                <div class="col">
-                                    <label>Stage (N)</label>
-                                    <input type="text" class="form-control" name="stage_n">
-                                </div>
-                                <div class="col">
-                                    <label>Stage (M)</label>
-                                    <input type="text" class="form-control" name="stage_m">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Clinical/Pathologic Stage</label>
-                                    <input type="text" class="form-control" name="clinical_stage">
-                                </div>
-                                <div class="col">
-                                    <label>Time of 1st Diagnosis</label>
-                                    <input type="date" class="form-control" name="first_diagnosis_date">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col">
-                                    <label>Referred From (Hospital, Doctor)</label>
-                                    <input type="text" class="form-control" name="referred_from">
-                                </div>
-                                <div class="col">
-                                    <label>If Self Referred</label>
-                                    <select class="form-control" name="self_referred">
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
+                                <div class="card-body">
+                                    <form action="/forms/level1/submit?success=1" method="POST">
+                                        <!-- UID Field -->
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>UID (ADPCT No.)</label>
+                                                <input type="text" class="form-control" name="uid" value="<%= uid %>" readonly required>
+                                            </div>
+                                            <div class="col">
+                                                <label>Date</label>
+                                                <input type="text" class="form-control" value="<%= new Date().toLocaleDateString() %>" readonly>
+                                            </div>
+                                        </div>
+                                        <!-- 1. PATIENT'S DEMOGRAPHIC DETAILS -->
+                                        <h5>1. Patient's Demographic Details</h5>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Name</label>
+                                                <input type="text" class="form-control" name="name" required>
+                                            </div>
+                                            <div class="col">
+                                                <label>Age</label>
+                                                <input type="number" class="form-control" name="age" required>
+                                            </div>
+                                            <div class="col">
+                                                <label>Gender</label>
+                                                <select class="form-control" name="gender" required>
+                                                    <option>Male</option>
+                                                    <option>Female</option>
+                                                    <option>Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Monthly Income (Rs.)</label>
+                                                <input type="number" class="form-control" name="monthly_income">
+                                            </div>
+                                            <div class="col">
+                                                <label>Family Monthly Income (Rs.)</label>
+                                                <input type="number" class="form-control" name="family_monthly_income">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Patient's Occupation/Job</label>
+                                                <input type="text" class="form-control" name="occupation">
+                                            </div>
+                                            <div class="col">
+                                                <label>Education</label>
+                                                <select class="form-control" name="education" required>
+                                                    <option value="">Select Education</option>
+                                                    <option value="illiterate">Illiterate</option>
+                                                    <option value="primary">Primary (up to 5th)</option>
+                                                    <option value="middle">Middle (6th-8th)</option>
+                                                    <option value="highschool">High School (9th-10th)</option>
+                                                    <option value="intermediate">Intermediate (11th-12th)</option>
+                                                    <option value="graduate">Graduate</option>
+                                                    <option value="postgraduate">Post Graduate</option>
+                                                    <option value="professional">Professional Degree</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Address (Permanent)</label>
+                                            <input type="text" class="form-control" name="address_permanent" id="address_permanent">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>
+                                                Address (Present)
+                                                <input type="checkbox" id="same_address" style="margin-left:10px;">
+                                                <span style="font-weight:normal;">Same as Permanent</span>
+                                            </label>
+                                            <input type="text" class="form-control" name="address_present" id="address_present">
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Contact Phone No.</label>
+                                                <input type="number" class="form-control" name="contact_phone">
+                                            </div>
+                                            <div class="col">
+                                                <label>Alternate No.</label>
+                                                <input type="number" class="form-control" name="alternate_phone">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Accompanying Caregiver</label>
+                                                <input type="text" class="form-control" name="caregiver">
+                                            </div>
+                                            <div class="col">
+                                                <label>Other Significant Detail</label>
+                                                <input type="text" class="form-control" name="other_significant_detail">
+                                            </div>
+                                        </div>
 
-                            <!-- 3. TREATMENT HISTORY (BEFORE COMING TO ADPCT) -->
-                            <h5 class="mt-4">3. Treatment History (Before Coming to ADPCT)</h5>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Treatment</th>
-                                        <th>Yes/No</th>
-                                        <th>If Yes (Curative/Palliative/Not Explained)</th>
-                                        <th>Date (Started)</th>
-                                        <th>Date (Completed)</th>
-                                        <th>Remark by Patient/Family</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% ['Surgery','Radiotherapy','Chemotherapy','Hormone Drug','Immunotherapy/Targeted Drug','Alternate (Homeo/Ayurveda/Other)','Palliative Care'].forEach(function(treatment, idx) { %>
-                                    <tr>
-                                        <td><%= treatment %></td>
-                                        <td>
-                                            <select class="form-control" name="treatment[<%= idx %>][yesno]">
-                                                <option value="">--</option>
+                                        <!-- 2. MEDICAL HISTORY -->
+                                        <h5 class="mt-4">2. Medical History</h5>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Diagnosis</label>
+                                                <input type="text" class="form-control" name="diagnosis">
+                                            </div>
+                                            <div class="col">
+                                                <label>Site</label>
+                                                <select class="form-control" name="site" required>
+                                                    <option value="">Select Site</option>
+                                                    <option value="head">Head</option>
+                                                    <option value="neck">Neck</option>
+                                                    <option value="breast">Breast</option>
+                                                    <option value="lungs">Lungs</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Stage (T)</label>
+                                                <input type="text" class="form-control" name="stage_t">
+                                            </div>
+                                            <div class="col">
+                                                <label>Stage (N)</label>
+                                                <input type="text" class="form-control" name="stage_n">
+                                            </div>
+                                            <div class="col">
+                                                <label>Stage (M)</label>
+                                                <input type="text" class="form-control" name="stage_m">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Clinical/Pathologic Stage</label>
+                                                <input type="text" class="form-control" name="clinical_stage">
+                                            </div>
+                                            <div class="col">
+                                                <label>Time of 1st Diagnosis</label>
+                                                <input type="date" class="form-control" name="first_diagnosis_date">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 row">
+                                            <div class="col">
+                                                <label>Referred From (Hospital, Doctor)</label>
+                                                <input type="text" class="form-control" name="referred_from">
+                                            </div>
+                                            <div class="col">
+                                                <label>If Self Referred</label>
+                                                <select class="form-control" name="self_referred">
+                                                    <option value="yes">Yes</option>
+                                                    <option value="no">No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 3. TREATMENT HISTORY (BEFORE COMING TO ADPCT) -->
+                                        <h5 class="mt-4">3. Treatment History (Before Coming to ADPCT)</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Treatment</th>
+                                                    <th>Yes/No</th>
+                                                    <th>If Yes (Curative/Palliative/Not Explained)</th>
+                                                    <th>Date (Started)</th>
+                                                    <th>Date (Completed)</th>
+                                                    <th>Remark by Patient/Family</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% ['Surgery','Radiotherapy','Chemotherapy','Hormone Drug','Immunotherapy/Targeted Drug','Alternate (Homeo/Ayurveda/Other)','Palliative Care'].forEach(function(treatment, idx) { %>
+                                                <tr>
+                                                    <td><%= treatment %></td>
+                                                    <td>
+                                                        <select class="form-control" name="treatment[<%= idx %>][yesno]">
+                                                            <option value="">--</option>
+                                                            <option value="yes">Yes</option>
+                                                            <option value="no">No</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" name="treatment[<%= idx %>][type]">
+                                                            <option value="">--</option>
+                                                            <option value="curative">Curative</option>
+                                                            <option value="palliative">Palliative</option>
+                                                            <option value="not_explained">Not Explained</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="date" class="form-control" name="treatment[<%= idx %>][start]" max="<%= new Date().toISOString().split('T')[0] %>">
+                                                    </td>
+                                                    <td>
+                                                        <input type="date" class="form-control" name="treatment[<%= idx %>][end]" max="<%= new Date().toISOString().split('T')[0] %>">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="treatment[<%= idx %>][remark]">
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+
+                                        <!-- 4. ASSOCIATED AILMENTS (CO-MORBIDITY) -->
+                                        <h5 class="mt-4">4. Associated Ailments (Co-morbidity)</h5>
+                                        <input type="text" class="form-control mb-2" name="co_morbidity" placeholder="DM / HTN / COPD / Cardiac / Mental / Renal / Hepatic / Allergy / Other">
+
+                                        <!-- 5. PAIN ASSESSMENT SCALE -->
+                                        <h5 class="mt-4">5. Pain Assessment Scale</h5>
+                                        <div class="mb-2">
+                                            <label>Pain Intensity (0-10)</label>
+                                            <input type="number" class="form-control" name="pain_intensity" min="0" max="10">
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Pain Site</th>
+                                                    <th>Intensity</th>
+                                                    <th>Palliative Factors</th>
+                                                    <th>Proactive Factors</th>
+                                                    <th>Quality of Pain</th>
+                                                    <th>Temporal Factors</th>
+                                                    <th>Radiation</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% for(let i=0;i<2;i++){ %>
+                                                <tr>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][site]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][intensity]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][palliative]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][proactive]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][quality]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][temporal]"></td>
+                                                    <td><input type="text" class="form-control" name="pain[<%= i %>][radiation]"></td>
+                                                </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>
+
+                                        <!-- 6. PSYCHOSOCIAL ASSESSMENT -->
+                                        <h5 class="mt-4">6. Psychosocial Assessment</h5>
+                                        <div class="mb-2">
+                                            <label>Patient's Insight: Information about diagnosis</label>
+                                            <select class="form-control" name="insight_diagnosis">
                                                 <option value="yes">Yes</option>
                                                 <option value="no">No</option>
                                             </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" name="treatment[<%= idx %>][type]">
-                                        </td>
-                                        <td>
-                                            <input type="date" class="form-control" name="treatment[<%= idx %>][start]">
-                                        </td>
-                                        <td>
-                                            <input type="date" class="form-control" name="treatment[<%= idx %>][end]">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" name="treatment[<%= idx %>][remark]">
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                </tbody>
-                            </table>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Information about Disease Status</label>
+                                            <select class="form-control" name="disease_status">
+                                                <option value="adequate">Adequate</option>
+                                                <option value="partial">Partial</option>
+                                                <option value="nil">Nil</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Disease Status told by (outside)</label>
+                                            <input type="text" class="form-control" name="disease_status_told_by" placeholder="Doctor/Nurse/Family/Friends/Guessed">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Patient is Breadwinner</label>
+                                            <select class="form-control" name="breadwinner">
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Type of Family</label>
+                                            <select class="form-control" name="family_type">
+                                                <option value="nuclear">Nuclear</option>
+                                                <option value="joint">Joint</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>No. of Family Members</label>
+                                            <select class="form-control" name="family_members">
+                                                <option value="dependent">Dependent</option>
+                                                <option value="independent">Independent</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Spouse's Attitude</label>
+                                            <select class="form-control" name="spouse_attitude">
+                                                <option value="sympathetic">Sympathetic</option>
+                                                <option value="considerate">Considerate</option>
+                                                <option value="indifferent">Indifferent</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Children Attitude</label>
+                                            <select class="form-control" name="children_attitude">
+                                                <option value="sympathetic">Sympathetic</option>
+                                                <option value="considerate">Considerate</option>
+                                                <option value="indifferent">Indifferent</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Accompanying Caregiver is Breadwinner</label>
+                                            <select class="form-control" name="caregiver_breadwinner">
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Reaction to Illness</label>
+                                            <select class="form-control" name="reaction_illness">
+                                                <option>Anger</option>
+                                                <option>Depression</option>
+                                                <option>Denial</option>
+                                                <option>Acceptance</option>
+                                                <option>Cannot Say</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Patient is Engaging in Family Activities</label>
+                                            <select class="form-control" name="family_activities">
+                                                <option>Same as Before</option>
+                                                <option>Decreased</option>
+                                                <option>Completely Isolated</option>
+                                                <option>Unable</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Social Stigma (if any)</label>
+                                            <input type="text" class="form-control" name="social_stigma">
+                                        </div>
 
-                            <!-- 4. ASSOCIATED AILMENTS (CO-MORBIDITY) -->
-                            <h5 class="mt-4">4. Associated Ailments (Co-morbidity)</h5>
-                            <input type="text" class="form-control mb-2" name="co_morbidity" placeholder="DM / HTN / COPD / Cardiac / Mental / Renal / Hepatic / Allergy / Other">
+                                        <!-- 7. SPIRITUAL ASSESSMENT -->
+                                        <h5 class="mt-4">7. Spiritual Assessment</h5>
+                                        <div class="mb-2">
+                                            <label>Belief in God</label>
+                                            <select class="form-control" name="belief_god">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Present Belief</label>
+                                            <select class="form-control" name="present_belief">
+                                                <option>Same</option>
+                                                <option>Increased</option>
+                                                <option>Decreased</option>
+                                                <option>No Belief</option>
+                                            </select>
+                                        </div>
 
-                            <!-- 5. PAIN ASSESSMENT SCALE -->
-                            <h5 class="mt-4">5. Pain Assessment Scale</h5>
-                            <div class="mb-2">
-                                <label>Pain Intensity (0-10)</label>
-                                <input type="number" class="form-control" name="pain_intensity" min="0" max="10">
-                            </div>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Pain Site</th>
-                                        <th>Intensity</th>
-                                        <th>Palliative Factors</th>
-                                        <th>Proactive Factors</th>
-                                        <th>Quality of Pain</th>
-                                        <th>Temporal Factors</th>
-                                        <th>Radiation</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(let i=0;i<2;i++){ %>
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][site]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][intensity]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][palliative]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][proactive]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][quality]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][temporal]"></td>
-                                        <td><input type="text" class="form-control" name="pain[<%= i %>][radiation]"></td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
+                                        <!-- 8. CURRENT MEDICATION -->
+                                        <h5 class="mt-4">8. Current Medication (at 1st Visit to ADPCT)</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Drug</th>
+                                                    <th>Dose</th>
+                                                    <th>Response</th>
+                                                    <th>Started From (Details)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% for(let i=0;i<7;i++){ %>
+                                                <tr>
+                                                    <td><input type="text" class="form-control" name="medication[<%= i %>][drug]"></td>
+                                                    <td><input type="text" class="form-control" name="medication[<%= i %>][dose]"></td>
+                                                    <td><input type="text" class="form-control" name="medication[<%= i %>][response]"></td>
+                                                    <td><input type="text" class="form-control" name="medication[<%= i %>][started_from]"></td>
+                                                </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                        <div class="mb-2">
+                                            <label>Receiving any Cancer Treatment?</label>
+                                            <input type="text" class="form-control" name="receiving_cancer_treatment">
+                                        </div>
 
-                            <!-- 6. PSYCHOSOCIAL ASSESSMENT -->
-                            <h5 class="mt-4">6. Psychosocial Assessment</h5>
-                            <div class="mb-2">
-                                <label>Patient's Insight: Information about diagnosis</label>
-                                <select class="form-control" name="insight_diagnosis">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Information about Disease Status</label>
-                                <select class="form-control" name="disease_status">
-                                    <option value="adequate">Adequate</option>
-                                    <option value="partial">Partial</option>
-                                    <option value="nil">Nil</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Disease Status told by (outside)</label>
-                                <input type="text" class="form-control" name="disease_status_told_by" placeholder="Doctor/Nurse/Family/Friends/Guessed">
-                            </div>
-                            <div class="mb-2">
-                                <label>Patient is Breadwinner</label>
-                                <select class="form-control" name="breadwinner">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Type of Family</label>
-                                <select class="form-control" name="family_type">
-                                    <option value="nuclear">Nuclear</option>
-                                    <option value="joint">Joint</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>No. of Family Members</label>
-                                <select class="form-control" name="family_members">
-                                    <option value="dependent">Dependent</option>
-                                    <option value="independent">Independent</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Spouse's Attitude</label>
-                                <select class="form-control" name="spouse_attitude">
-                                    <option value="sympathetic">Sympathetic</option>
-                                    <option value="considerate">Considerate</option>
-                                    <option value="indifferent">Indifferent</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Children Attitude</label>
-                                <select class="form-control" name="children_attitude">
-                                    <option value="sympathetic">Sympathetic</option>
-                                    <option value="considerate">Considerate</option>
-                                    <option value="indifferent">Indifferent</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Accompanying Caregiver is Breadwinner</label>
-                                <select class="form-control" name="caregiver_breadwinner">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Reaction to Illness</label>
-                                <select class="form-control" name="reaction_illness">
-                                    <option>Anger</option>
-                                    <option>Depression</option>
-                                    <option>Denial</option>
-                                    <option>Acceptance</option>
-                                    <option>Cannot Say</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Patient is Engaging in Family Activities</label>
-                                <select class="form-control" name="family_activities">
-                                    <option>Same as Before</option>
-                                    <option>Decreased</option>
-                                    <option>Completely Isolated</option>
-                                    <option>Unable</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Social Stigma (if any)</label>
-                                <input type="text" class="form-control" name="social_stigma">
-                            </div>
+                                        <!-- 9. CLINICAL RECORD -->
+                                        <h5 class="mt-4">9. Clinical Record</h5>
+                                        <div class="mb-2">
+                                            <label>General Condition</label>
+                                            <input type="text" class="form-control" name="general_condition">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Personal Hygiene</label>
+                                            <input type="text" class="form-control" name="personal_hygiene">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Oral Condition</label>
+                                            <input type="text" class="form-control" name="oral_condition" placeholder="Thrush / Ulcer / Dental Caries / Bleeding / Bad Odor">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Body Build</label>
+                                            <input type="text" class="form-control" name="body_build">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Hydration</label>
+                                            <input type="text" class="form-control" name="hydration">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Feeding</label>
+                                            <input type="text" class="form-control" name="feeding">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Bowel Movement</label>
+                                            <input type="text" class="form-control" name="bowel_movement">
+                                        </div>
 
-                            <!-- 7. SPIRITUAL ASSESSMENT -->
-                            <h5 class="mt-4">7. Spiritual Assessment</h5>
-                            <div class="mb-2">
-                                <label>Belief in God</label>
-                                <select class="form-control" name="belief_god">
-                                    <option>Yes</option>
-                                    <option>No</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Present Belief</label>
-                                <select class="form-control" name="present_belief">
-                                    <option>Same</option>
-                                    <option>Increased</option>
-                                    <option>Decreased</option>
-                                    <option>No Belief</option>
-                                </select>
-                            </div>
+                                        <!-- 10. ECOG PERFORMANCE STATUS SCORE -->
+                                        <h5 class="mt-4">10. ECOG Performance Status Score</h5>
+                                        <select class="form-control mb-2" name="ecog_score">
+                                            <option value="0">0 - Normal Activity</option>
+                                            <option value="1">1 - Light Household Work</option>
+                                            <option value="2">2 - Ambulatory and Capable of Self-care</option>
+                                            <option value="3">3 - Only Limited Self-care, Confined to Bed more than 50% of waking hours</option>
+                                            <option value="4">4 - Completely Disabled, Totally Confined to bed or Chair</option>
+                                        </select>
 
-                            <!-- 8. CURRENT MEDICATION -->
-                            <h5 class="mt-4">8. Current Medication (at 1st Visit to ADPCT)</h5>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Drug</th>
-                                        <th>Dose</th>
-                                        <th>Response</th>
-                                        <th>Started From (Details)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(let i=0;i<7;i++){ %>
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="medication[<%= i %>][drug]"></td>
-                                        <td><input type="text" class="form-control" name="medication[<%= i %>][dose]"></td>
-                                        <td><input type="text" class="form-control" name="medication[<%= i %>][response]"></td>
-                                        <td><input type="text" class="form-control" name="medication[<%= i %>][started_from]"></td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                            <div class="mb-2">
-                                <label>Receiving any Cancer Treatment?</label>
-                                <input type="text" class="form-control" name="receiving_cancer_treatment">
-                            </div>
+                                        <!-- 11. SYMPTOMS AS ON DATE -->
+                                        <h5 class="mt-4">11. Symptoms as on Date (To Record)</h5>
+                                        <textarea class="form-control mb-3" name="symptoms" rows="2" placeholder="List symptoms (comma separated)"></textarea>
 
-                            <!-- 9. CLINICAL RECORD -->
-                            <h5 class="mt-4">9. Clinical Record</h5>
-                            <div class="mb-2">
-                                <label>General Condition</label>
-                                <input type="text" class="form-control" name="general_condition">
+                                        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label>Personal Hygiene</label>
-                                <input type="text" class="form-control" name="personal_hygiene">
-                            </div>
-                            <div class="mb-2">
-                                <label>Oral Condition</label>
-                                <input type="text" class="form-control" name="oral_condition" placeholder="Thrush / Ulcer / Dental Caries / Bleeding / Bad Odor">
-                            </div>
-                            <div class="mb-2">
-                                <label>Body Build</label>
-                                <input type="text" class="form-control" name="body_build">
-                            </div>
-                            <div class="mb-2">
-                                <label>Hydration</label>
-                                <input type="text" class="form-control" name="hydration">
-                            </div>
-                            <div class="mb-2">
-                                <label>Feeding</label>
-                                <input type="text" class="form-control" name="feeding">
-                            </div>
-                            <div class="mb-2">
-                                <label>Bowel Movement</label>
-                                <input type="text" class="form-control" name="bowel_movement">
-                            </div>
-
-                            <!-- 10. ECOG PERFORMANCE STATUS SCORE -->
-                            <h5 class="mt-4">10. ECOG Performance Status Score</h5>
-                            <select class="form-control mb-2" name="ecog_score">
-                                <option value="0">0 - Normal Activity</option>
-                                <option value="1">1 - Light Household Work</option>
-                                <option value="2">2 - Ambulatory and Capable of Self-care</option>
-                                <option value="3">3 - Only Limited Self-care, Confined to Bed more than 50% of waking hours</option>
-                                <option value="4">4 - Completely Disabled, Totally Confined to bed or Chair</option>
-                            </select>
-
-                            <!-- 11. SYMPTOMS AS ON DATE -->
-                            <h5 class="mt-4">11. Symptoms as on Date (To Record)</h5>
-                            <textarea class="form-control mb-3" name="symptoms" rows="2" placeholder="List symptoms (comma separated)"></textarea>
-
-                            <button type="submit" class="btn btn-primary mt-3">Submit</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4" >
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Quick Links</h4>
-                    </div>
-                    <div class="card-body">
-                        <a href="/forms/view/level3" class="btn btn-secondary w-100">View Level 3 Forms (Read-Only)</a>
-                    </div>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
@@ -474,6 +511,56 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'logout-event') {
                 window.location.href = '/auth/login'; // Redirect to login page
+            }
+        });
+
+        // Present Address - Same as Permanent logic
+        document.addEventListener('DOMContentLoaded', function() {
+            var sameCheckbox = document.getElementById('same_address');
+            var permInput = document.getElementById('address_permanent');
+            var presInput = document.getElementById('address_present');
+
+            function syncAddress() {
+                if (sameCheckbox.checked) {
+                    presInput.value = permInput.value;
+                    presInput.readOnly = true;
+                } else {
+                    presInput.readOnly = false;
+                }
+            }
+
+            sameCheckbox.addEventListener('change', syncAddress);
+            permInput.addEventListener('input', function() {
+                if (sameCheckbox.checked) {
+                    presInput.value = permInput.value;
+                }
+            });
+        });
+
+        // Prevent showing stale form on browser back/forward navigation
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                // If URL contains ?success=1, redirect to dashboard instead of reloading form
+                if (window.location.search.includes('success=1')) {
+                    window.location.href = '/forms/dashboard/level1';
+                } else {
+                    window.location.reload();
+                }
+            }
+        });
+
+        // Remove ?success=1 from URL after showing modal (so it doesn't show again)
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.search.includes('success=1')) {
+                if (window.history.replaceState) {
+                    const url = window.location.pathname + window.location.search.replace(/([?&])success=1(&)?/, function(match, p1, p2) {
+                        if (p1 === '?' && !p2) return '';
+                        if (p1 === '?' && p2) return '?';
+                        if (p1 === '&') return p2 ? '&' : '';
+                        return '';
+                    }).replace(/[?&]$/, '');
+                    window.history.replaceState({}, document.title, url);
+                }
             }
         });
     </script>

@@ -14,18 +14,21 @@ router.get('/admin-login', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log('Login attempt:', { username, password }); // Log login attempt
+
         const user = await User.findOne({ username, password });
-        
         if (user) {
-            req.session.username = user.username; // Set session username
-            req.session.userLevel = user.level;  // Set session level
-            req.session.save(); // Ensure session is saved
+            console.log('User found:', user); // Log user details
+            req.session.username = user.username;
+            req.session.userLevel = user.level;
+            req.session.save();
             res.json({
                 success: true,
                 username: user.username,
-                redirect: '/forms/level' + user.level
+                redirect: '/forms/dashboard/level' + user.level
             });
         } else {
+            console.log('Invalid credentials'); // Log invalid credentials
             res.json({ success: false });
         }
     } catch (error) {
@@ -38,7 +41,7 @@ router.post('/admin-login', async (req, res) => {
     try {
         const { pin } = req.body;
         const admin = await Admin.findOne({ pin });
-        
+
         if (admin) {
             req.session.isAdmin = true; // Set admin session
             res.redirect('/admin/dashboard');

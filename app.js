@@ -49,10 +49,21 @@ app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/forms', require('./routes/forms'));
 
+// Test database connectivity
+app.get('/test-db', async (req, res) => {
+    try {
+        const users = await mongoose.connection.db.collection('users').find({}).toArray();
+        res.json({ success: true, users });
+    } catch (error) {
+        console.error('Database test error:', error);
+        res.json({ success: false, error: error.message });
+    }
+});
+
 // Default route
 app.get('/', (req, res) => {
-    if (req.session.username) {
-        res.redirect('/forms/level1');
+    if (req.session.username && req.session.userLevel) {
+        res.redirect('/forms/dashboard/level' + req.session.userLevel);
     } else {
         res.redirect('/auth/login');
     }

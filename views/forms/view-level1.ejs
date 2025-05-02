@@ -9,51 +9,229 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f7f9fb; }
+        .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #eee; }
+        .sidebar .list-group-item.active { background: #e7f1ff; color: #1976d2; border: none; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <span class="navbar-brand">View Level 1 Forms</span>
-            <div class="navbar-nav ms-auto">
-                <a href="#" id="logout" class="nav-link">Logout</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">Amrit Dhara Palliative Care</span>
+            <div>
+                <span class="me-3">Welcome, <%= username %></span>
+                <a href="#" id="logout" class="btn btn-link">Sign out</a>
             </div>
         </div>
     </nav>
-    <div class="container mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>Read-Only Level 1 Forms</h4>
-            </div>
-            <div class="card-body">
-                <% if (forms && forms.length > 0) { %>
-                    <% forms.forEach(form => { %>
-                        <div class="mb-4 border rounded p-3 bg-light">
-                            <h5><%= form.title %></h5>
-                            <div>
-                                <strong>Name:</strong> <%= form.content.name %> |
-                                <strong>Age:</strong> <%= form.content.age %> |
-                                <strong>Gender:</strong> <%= form.content.gender %>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar pt-4">
+                <div class="list-group">
+                    <a href="/forms/dashboard/level1" class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="/forms/level1" class="list-group-item list-group-item-action">New Patient Case</a>
+                    <a href="/forms/view/level1" class="list-group-item list-group-item-action active">All Patients</a>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-4 pt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Read-Only Level 1 Forms</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="/forms/level3" class="btn btn-outline-primary mb-3">&larr; Back to Form</a>
+                        <%
+                        let filteredForms = forms;
+                        if (typeof uid !== 'undefined' && uid) {
+                            filteredForms = forms.filter(form => form.uid == uid || (form.content && form.content.uid == uid));
+                        }
+                        %>
+                        <% if (filteredForms && filteredForms.length > 0) { %>
+                            <% filteredForms.forEach(form => { 
+                                const c = form.content;
+                            %>
+                            <div class="mb-4 border rounded p-3 bg-light">
+                                <h5><%= form.title %></h5>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>UID:</strong> <%= form.uid || c.uid %></div>
+                                    <div class="col"><strong>Date:</strong> <%= form.createdAt.toLocaleDateString() %></div>
+                                </div>
+                                <h6>1. Patient's Demographic Details</h6>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Name:</strong> <%= c.name %></div>
+                                    <div class="col"><strong>Age:</strong> <%= c.age %></div>
+                                    <div class="col"><strong>Gender:</strong> <%= c.gender %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Monthly Income (Rs.):</strong> <%= c.monthly_income %></div>
+                                    <div class="col"><strong>Family Monthly Income (Rs.):</strong> <%= c.family_monthly_income %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Occupation:</strong> <%= c.occupation %></div>
+                                    <div class="col"><strong>Education:</strong> <%= c.education %></div>
+                                </div>
+                                <div class="mb-2"><strong>Address (Permanent):</strong> <%= c.address_permanent %></div>
+                                <div class="mb-2"><strong>Address (Present):</strong> <%= c.address_present %></div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Contact Phone No.:</strong> <%= c.contact_phone %></div>
+                                    <div class="col"><strong>Alternate No.:</strong> <%= c.alternate_phone %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Accompanying Caregiver:</strong> <%= c.caregiver %></div>
+                                    <div class="col"><strong>Other Significant Detail:</strong> <%= c.other_significant_detail %></div>
+                                </div>
+
+                                <h6 class="mt-3">2. Medical History</h6>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Diagnosis:</strong> <%= c.diagnosis %></div>
+                                    <div class="col"><strong>Site:</strong> <%= c.site %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Stage (T):</strong> <%= c.stage_t %></div>
+                                    <div class="col"><strong>Stage (N):</strong> <%= c.stage_n %></div>
+                                    <div class="col"><strong>Stage (M):</strong> <%= c.stage_m %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Clinical/Pathologic Stage:</strong> <%= c.clinical_stage %></div>
+                                    <div class="col"><strong>Time of 1st Diagnosis:</strong> <%= c.first_diagnosis_date %></div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col"><strong>Referred From:</strong> <%= c.referred_from %></div>
+                                    <div class="col"><strong>If Self Referred:</strong> <%= c.self_referred %></div>
+                                </div>
+
+                                <h6 class="mt-3">3. Treatment History (Before Coming to ADPCT)</h6>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Treatment</th>
+                                            <th>Yes/No</th>
+                                            <th>Type</th>
+                                            <th>Date (Started)</th>
+                                            <th>Date (Completed)</th>
+                                            <th>Remark</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% 
+                                        const treatments = ['Surgery','Radiotherapy','Chemotherapy','Hormone Drug','Immunotherapy/Targeted Drug','Alternate (Homeo/Ayurveda/Other)','Palliative Care'];
+                                        if (c.treatment) {
+                                            for (let i = 0; i < treatments.length; i++) {
+                                                const t = c.treatment[i] || {};
+                                        %>
+                                        <tr>
+                                            <td><%= treatments[i] %></td>
+                                            <td><%= t.yesno %></td>
+                                            <td><%= t.type %></td>
+                                            <td><%= t.start %></td>
+                                            <td><%= t.end %></td>
+                                            <td><%= t.remark %></td>
+                                        </tr>
+                                        <%  } } %>
+                                    </tbody>
+                                </table>
+
+                                <h6 class="mt-3">4. Associated Ailments (Co-morbidity)</h6>
+                                <div class="mb-2"><%= c.co_morbidity %></div>
+
+                                <h6 class="mt-3">5. Pain Assessment Scale</h6>
+                                <div class="mb-2"><strong>Pain Intensity (0-10):</strong> <%= c.pain_intensity %></div>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Pain Site</th>
+                                            <th>Intensity</th>
+                                            <th>Palliative Factors</th>
+                                            <th>Proactive Factors</th>
+                                            <th>Quality of Pain</th>
+                                            <th>Temporal Factors</th>
+                                            <th>Radiation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (c.pain) { for (let i = 0; i < c.pain.length; i++) { const p = c.pain[i] || {}; %>
+                                        <tr>
+                                            <td><%= p.site %></td>
+                                            <td><%= p.intensity %></td>
+                                            <td><%= p.palliative %></td>
+                                            <td><%= p.proactive %></td>
+                                            <td><%= p.quality %></td>
+                                            <td><%= p.temporal %></td>
+                                            <td><%= p.radiation %></td>
+                                        </tr>
+                                        <% } } %>
+                                    </tbody>
+                                </table>
+
+                                <h6 class="mt-3">6. Psychosocial Assessment</h6>
+                                <div class="mb-2"><strong>Patient's Insight:</strong> <%= c.insight_diagnosis %></div>
+                                <div class="mb-2"><strong>Disease Status:</strong> <%= c.disease_status %></div>
+                                <div class="mb-2"><strong>Disease Status told by:</strong> <%= c.disease_status_told_by %></div>
+                                <div class="mb-2"><strong>Patient is Breadwinner:</strong> <%= c.breadwinner %></div>
+                                <div class="mb-2"><strong>Type of Family:</strong> <%= c.family_type %></div>
+                                <div class="mb-2"><strong>No. of Family Members:</strong> <%= c.family_members %></div>
+                                <div class="mb-2"><strong>Spouse's Attitude:</strong> <%= c.spouse_attitude %></div>
+                                <div class="mb-2"><strong>Children Attitude:</strong> <%= c.children_attitude %></div>
+                                <div class="mb-2"><strong>Accompanying Caregiver is Breadwinner:</strong> <%= c.caregiver_breadwinner %></div>
+                                <div class="mb-2"><strong>Reaction to Illness:</strong> <%= c.reaction_illness %></div>
+                                <div class="mb-2"><strong>Patient is Engaging in Family Activities:</strong> <%= c.family_activities %></div>
+                                <div class="mb-2"><strong>Social Stigma (if any):</strong> <%= c.social_stigma %></div>
+
+                                <h6 class="mt-3">7. Spiritual Assessment</h6>
+                                <div class="mb-2"><strong>Belief in God:</strong> <%= c.belief_god %></div>
+                                <div class="mb-2"><strong>Present Belief:</strong> <%= c.present_belief %></div>
+
+                                <h6 class="mt-3">8. Current Medication (at 1st Visit to ADPCT)</h6>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Drug</th>
+                                            <th>Dose</th>
+                                            <th>Response</th>
+                                            <th>Started From (Details)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (c.medication) { for (let i = 0; i < c.medication.length; i++) { const m = c.medication[i] || {}; %>
+                                        <tr>
+                                            <td><%= m.drug %></td>
+                                            <td><%= m.dose %></td>
+                                            <td><%= m.response %></td>
+                                            <td><%= m.started_from %></td>
+                                        </tr>
+                                        <% } } %>
+                                    </tbody>
+                                </table>
+                                <div class="mb-2"><strong>Receiving any Cancer Treatment?:</strong> <%= c.receiving_cancer_treatment %></div>
+
+                                <h6 class="mt-3">9. Clinical Record</h6>
+                                <div class="mb-2"><strong>General Condition:</strong> <%= c.general_condition %></div>
+                                <div class="mb-2"><strong>Personal Hygiene:</strong> <%= c.personal_hygiene %></div>
+                                <div class="mb-2"><strong>Oral Condition:</strong> <%= c.oral_condition %></div>
+                                <div class="mb-2"><strong>Body Build:</strong> <%= c.body_build %></div>
+                                <div class="mb-2"><strong>Hydration:</strong> <%= c.hydration %></div>
+                                <div class="mb-2"><strong>Feeding:</strong> <%= c.feeding %></div>
+                                <div class="mb-2"><strong>Bowel Movement:</strong> <%= c.bowel_movement %></div>
+
+                                <h6 class="mt-3">10. ECOG Performance Status Score</h6>
+                                <div class="mb-2"><strong>ECOG Score:</strong> <%= c.ecog_score %></div>
+
+                                <h6 class="mt-3">11. Symptoms as on Date</h6>
+                                <div class="mb-2"><%= c.symptoms %></div>
+
+                                <div class="mb-2"><strong>Submitted At:</strong> <%= form.createdAt.toLocaleString() %></div>
                             </div>
-                            <div>
-                                <strong>Diagnosis:</strong> <%= form.content.diagnosis %> |
-                                <strong>Site:</strong> <%= form.content.site %>
-                            </div>
-                            <div>
-                                <strong>Stage:</strong> T: <%= form.content.stage_t %>, N: <%= form.content.stage_n %>, M: <%= form.content.stage_m %>
-                            </div>
-                            <div>
-                                <strong>Submitted At:</strong> <%= form.createdAt.toLocaleString() %>
-                            </div>
-                            <details class="mt-2">
-                                <summary>Show Full Details</summary>
-                                <pre style="white-space: pre-wrap;"><%= JSON.stringify(form.content, null, 2) %></pre>
-                            </details>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p>No forms available for Level 1.</p>
-                <% } %>
-            </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p>No forms available for Level 1<% if (typeof uid !== 'undefined' && uid) { %> with UID <%= uid %><% } %>.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
     <script>
