@@ -58,6 +58,7 @@
                             <th>Level</th>
                             <th>Last Login</th>
                             <th>Last Logout</th>
+                            <th>Session Duration</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -67,10 +68,21 @@
                                 <td><%= user.username %></td>
                                 <td>Level <%= user.level %></td>
                                 <td>
-                                    <%= user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never' %>
+                                    <span class="datetime" data-datetime="<%= user.lastLoginAt ? user.lastLoginAt.toISOString() : '' %>">
+                                        <%= user.lastLoginAt ? user.lastLoginAt.toISOString() : 'Never' %>
+                                    </span>
                                 </td>
                                 <td>
-                                    <%= user.lastLogoutAt ? new Date(user.lastLogoutAt).toLocaleString() : 'Never' %>
+                                    <span class="datetime" data-datetime="<%= user.lastLogoutAt ? user.lastLogoutAt.toISOString() : '' %>">
+                                        <%= user.lastLogoutAt ? user.lastLogoutAt.toISOString() : 'Never' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="duration"
+                                        data-login="<%= user.lastLoginAt ? user.lastLoginAt.toISOString() : '' %>"
+                                        data-logout="<%= user.lastLogoutAt ? user.lastLogoutAt.toISOString() : '' %>">
+                                        <!-- Will be filled by JS -->
+                                    </span>
                                 </td>
                                 <td>
                                     <form action="/admin/delete-user/<%= user._id %>" method="POST" style="display: inline;">
@@ -105,6 +117,56 @@
         window.addEventListener('storage', function(event) {
             if (event.key === 'logout-event') {
                 window.location.href = '/auth/admin-login'; // Redirect to admin login page
+            }
+        });
+
+        // Convert ISO datetime strings to local format in the table
+        document.querySelectorAll('.datetime').forEach(function(span) {
+            const iso = span.getAttribute('data-datetime');
+            if (iso) {
+                const date = new Date(iso);
+                if (!isNaN(date.getTime())) {
+                    span.textContent = date.toLocaleString();
+                } else {
+                    span.textContent = 'Never';
+                }
+            } else {
+                span.textContent = 'Never';
+            }
+        });
+
+        // Calculate and display session duration
+        function formatDuration(ms) {
+            if (ms < 0) return 'Invalid';
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            let result = '';
+            if (hours > 0) result += hours + 'h ';
+            if (minutes > 0 || hours > 0) result += minutes + 'm ';
+            result += seconds + 's';
+            return result;
+        }
+
+        document.querySelectorAll('.duration').forEach(function(span) {
+            const login = span.getAttribute('data-login');
+            const logout = span.getAttribute('data-logout');
+            if (login && logout) {
+                const loginDate = new Date(login);
+                const logoutDate = new Date(logout);
+                if (!isNaN(loginDate.getTime()) && !isNaN(logoutDate.getTime())) {
+                    const duration = logoutDate - loginDate;
+                    if (duration >= 0) {
+                        span.textContent = formatDuration(duration);
+                    } else {
+                        span.textContent = 'Invalid';
+                    }
+                } else {
+                    span.textContent = '-';
+                }
+            } else {
+                span.textContent = '-';
             }
         });
     </script>
