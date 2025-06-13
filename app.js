@@ -48,6 +48,7 @@ app.use((req, res, next) => {
 app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/forms', require('./routes/forms'));
+app.use('/forms/appointments', require('./routes/appointments')); // Add this line before the default route
 
 // Test database connectivity
 app.get('/test-db', async (req, res) => {

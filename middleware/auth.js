@@ -35,6 +35,11 @@ module.exports = {
             return next();
         }
 
+        // Allow users to view their own level
+        if (userLevel === requestedLevel) {
+            return next();
+        }
+
         // Allow Level 1 users to view Level 3 forms only
         if (userLevel === 1 && requestedLevel === 3) {
             return next();

@@ -46,7 +46,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-white shadow-sm">
         <div class="container-fluid">
-            <span class="navbar-brand fw-bold">Amrit Dhara Palliative Care</span>
+            <span class="navbar-brand fw-bold">Hospital Management App</span>
             <div>
                 <span class="me-3">Welcome, <%= username %></span>
                 <a href="#" id="logout" class="btn btn-link">Sign out</a>
@@ -65,13 +65,16 @@
                         <span class="me-2">+</span> New Patient Case
                     </a>
                     <a href="/forms/view/level1" class="list-group-item list-group-item-action">
-                        <span class="me-2">&#128101;</span> All Patients
+                        <span class="me-2">+</span> All Patients
                     </a>
                     <a href="/forms/followup/level1" class="list-group-item list-group-item-action">
                         <span class="me-2">&#128197;</span> Subsequent Follow Up
                     </a>
                     <a href="/forms/report/level1" class="list-group-item list-group-item-action">
                         <span class="me-2">&#128202;</span> Report
+                    </a>
+                    <a href="/forms/appointments/book" class="list-group-item list-group-item-action">
+                        <span class="me-2">&#128197;</span> Book Appointment
                     </a>
                 </div>
             </nav>
@@ -133,7 +136,7 @@
                                             <div class="col">
                                                 <label>Age</label>
                                                 <input type="number" class="form-control" name="age" required min="0" max="120"
-                                                    value="<%= editMode ? form.content.age : '' %>">
+                                                    value="<%= editMode ? form.content.age : '' %>" oninput="this.value = Math.abs(this.value)">
                                             </div>
                                             <div class="col">
                                                 <label>Gender</label>
@@ -148,13 +151,25 @@
                                         <div class="mb-2 row">
                                             <div class="col">
                                                 <label>Monthly Income (Rs.)</label>
-                                                <input type="text" class="form-control" name="monthly_income" inputmode="numeric" pattern="[0-9]*"
-                                                    value="<%= editMode ? form.content.monthly_income : '' %>">
+                                                <select class="form-control" name="monthly_income" required>
+                                                    <option value="">Select Income Range</option>
+                                                    <option value="Less than 5000" <%= editMode && form.content.monthly_income === 'Less than 5000' ? 'selected' : '' %>>Less than 5000</option>
+                                                    <option value="From 5000 to 9999" <%= editMode && form.content.monthly_income === 'From 5000 to 9999' ? 'selected' : '' %>>From 5000 to 9999</option>
+                                                    <option value="From 10000 to 19999" <%= editMode && form.content.monthly_income === 'From 10000 to 19999' ? 'selected' : '' %>>From 10000 to 19999</option>
+                                                    <option value="From 20000 to 49999" <%= editMode && form.content.monthly_income === 'From 20000 to 49999' ? 'selected' : '' %>>From 20000 to 49999</option>
+                                                    <option value="Greater than 50000" <%= editMode && form.content.monthly_income === 'Greater than 50000' ? 'selected' : '' %>>Greater than 50000</option>
+                                                </select>
                                             </div>
                                             <div class="col">
                                                 <label>Family Monthly Income (Rs.)</label>
-                                                <input type="text" class="form-control" name="family_monthly_income" inputmode="numeric" pattern="[0-9]*"
-                                                    value="<%= editMode ? form.content.family_monthly_income : '' %>">
+                                                <select class="form-control" name="family_monthly_income" required>
+                                                    <option value="">Select Income Range</option>
+                                                    <option value="Less than 5000" <%= editMode && form.content.family_monthly_income === 'Less than 5000' ? 'selected' : '' %>>Less than 5000</option>
+                                                    <option value="From 5000 to 9999" <%= editMode && form.content.family_monthly_income === 'From 5000 to 9999' ? 'selected' : '' %>>From 5000 to 9999</option>
+                                                    <option value="From 10000 to 19999" <%= editMode && form.content.family_monthly_income === 'From 10000 to 19999' ? 'selected' : '' %>>From 10000 to 19999</option>
+                                                    <option value="From 20000 to 49999" <%= editMode && form.content.family_monthly_income === 'From 20000 to 49999' ? 'selected' : '' %>>From 20000 to 49999</option>
+                                                    <option value="Greater than 50000" <%= editMode && form.content.family_monthly_income === 'Greater than 50000' ? 'selected' : '' %>>Greater than 50000</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="mb-2 row">
@@ -265,16 +280,18 @@
                                                 <label>Contact Phone No.</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text">+91</span>
-                                                    <input type="tel" class="form-control" name="contact_phone" required pattern="[0-9]{10}" maxlength="10" placeholder="10 digits"
-                                                        value="<%= editMode ? (form.content.contact_phone ? form.content.contact_phone.replace('+91', '') : '') : '' %>">
+                                                    <input type="tel" class="form-control" name="contact_phone" required pattern="^\d{10}$" maxlength="10" placeholder="10 digits"
+                                                        value="<%= editMode ? (form.content.contact_phone ? form.content.contact_phone.replace('+91', '') : '') : '' %>"
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <label>Care giver's phone</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text">+91</span>
-                                                    <input type="tel" class="form-control" name="caregiver_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 digits"
-                                                        value="<%= editMode ? (form.content.caregiver_phone ? form.content.caregiver_phone.replace('+91', '') : '') : '' %>">
+                                                    <input type="tel" class="form-control" name="caregiver_phone" pattern="^\d{10}$" maxlength="10" placeholder="10 digits"
+                                                        value="<%= editMode ? (form.content.caregiver_phone ? form.content.caregiver_phone.replace('+91', '') : '') : '' %>"
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
                                                 </div>
                                             </div>
                                         </div>

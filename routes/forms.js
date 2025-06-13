@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated, checkViewAccess } = require('../middleware/auth');
 const Form = require('../models/Form'); // Assuming a Form model exists
+const Appointment = require('../models/Appointment');
 
 // Helper to generate UID (e.g., ADPCT-YYYYMMDD-001)
 async function generateUID() {
@@ -39,7 +40,12 @@ router.get('/level1', isAuthenticated, async (req, res) => {
     
     // Define dropdown options for the form
     const formOptions = {
-      districts: ['Dibrugarh', 'Tinsukia', 'Sivasagar', 'Jorhat', 'Golaghat', 'Other'],
+      districts: [
+        'Angul', 'Balangir', 'Balasore', 'Bargarh', 'Bhadrak', 'Boudh', 'Cuttack', 'Deogarh', 'Dhenkanal', 'Gajapati',
+        'Ganjam', 'Jagatsinghpur', 'Jajpur', 'Jharsuguda', 'Kalahandi', 'Kandhamal', 'Kendrapara', 'Kendujhar',
+        'Khordha', 'Koraput', 'Malkangiri', 'Mayurbhanj', 'Nabarangpur', 'Nayagarh', 'Nuapada', 'Puri', 'Rayagada',
+        'Sambalpur', 'Sonepur', 'Sundargarh', 'Other'
+      ],
       bodyLocations: ['Head', 'Neck', 'Breast', 'Lungs', 'Stomach', 'Liver', 'Colon', 'Rectum', 'Prostate', 'Ovary', 'Uterus', 'Bone', 'Skin', 'Brain', 'Blood', 'Lymph Nodes', 'Other'],
       painLocations: ['Head', 'Neck', 'Chest', 'Abdomen', 'Back', 'Arms', 'Legs', 'Joints', 'Other'],
       comorbidities: ['Diabetes Mellitus (DM)', 'Hypertension (HTN)', 'COPD', 'Cardiac Disease', 'Mental Illness', 'Renal Disease', 'Hepatic Disease', 'Allergy', 'None', 'Other'],
@@ -76,7 +82,12 @@ router.get('/level1/edit/:id', isAuthenticated, async (req, res) => {
     
     // Define dropdown options for the form
     const formOptions = {
-      districts: ['Dibrugarh', 'Tinsukia', 'Sivasagar', 'Jorhat', 'Golaghat', 'Other'],
+      districts: [
+        'Angul', 'Balangir', 'Balasore', 'Bargarh', 'Bhadrak', 'Boudh', 'Cuttack', 'Deogarh', 'Dhenkanal', 'Gajapati',
+        'Ganjam', 'Jagatsinghpur', 'Jajpur', 'Jharsuguda', 'Kalahandi', 'Kandhamal', 'Kendrapara', 'Kendujhar',
+        'Khordha', 'Koraput', 'Malkangiri', 'Mayurbhanj', 'Nabarangpur', 'Nayagarh', 'Nuapada', 'Puri', 'Rayagada',
+        'Sambalpur', 'Sonepur', 'Sundargarh', 'Other'
+      ],
       bodyLocations: ['Head', 'Neck', 'Breast', 'Lungs', 'Stomach', 'Liver', 'Colon', 'Rectum', 'Prostate', 'Ovary', 'Uterus', 'Bone', 'Skin', 'Brain', 'Blood', 'Lymph Nodes', 'Other'],
       painLocations: ['Head', 'Neck', 'Chest', 'Abdomen', 'Back', 'Arms', 'Legs', 'Joints', 'Other'],
       comorbidities: ['Diabetes Mellitus (DM)', 'Hypertension (HTN)', 'COPD', 'Cardiac Disease', 'Mental Illness', 'Renal Disease', 'Hepatic Disease', 'Allergy', 'None', 'Other'],
@@ -179,21 +190,23 @@ router.post('/level3/submit', isAuthenticated, async (req, res) => {
 router.post('/level1/submit', isAuthenticated, async (req, res) => {
   try {
     const { uid, ...formData } = req.body;
-    
-    // Validate phone number
-    if (!formData.contact_phone || !/^\+?[0-9]{10,12}$/.test(formData.contact_phone.replace(/\s/g, ''))) {
+
+    // Strictly allow only 10 digit numbers for phone fields
+    if (!formData.contact_phone || !/^\d{10}$/.test(formData.contact_phone)) {
       return res.status(400).send('Invalid phone number format. Please provide a 10-digit number.');
     }
-    
-    // Format phone numbers with country code if not present
-    if (formData.contact_phone && !formData.contact_phone.startsWith('+')) {
-      formData.contact_phone = '+91' + formData.contact_phone.replace(/\s/g, '');
+    if (formData.caregiver_phone && formData.caregiver_phone.length > 0 && !/^\d{10}$/.test(formData.caregiver_phone)) {
+      return res.status(400).send('Invalid caregiver phone number format. Please provide a 10-digit number.');
     }
-    
-    if (formData.caregiver_phone && !formData.caregiver_phone.startsWith('+')) {
-      formData.caregiver_phone = '+91' + formData.caregiver_phone.replace(/\s/g, '');
+
+    // Format phone numbers with country code
+    if (formData.contact_phone) {
+      formData.contact_phone = '+91' + formData.contact_phone;
     }
-    
+    if (formData.caregiver_phone) {
+      formData.caregiver_phone = '+91' + formData.caregiver_phone;
+    }
+
     // If referred_from is filled, set self_referred to "no"
     if (formData.referred_from && formData.referred_from.trim() !== '') {
       formData.self_referred = 'no';
@@ -218,37 +231,34 @@ router.post('/level1/submit', isAuthenticated, async (req, res) => {
 router.post('/level1/update/:id', isAuthenticated, async (req, res) => {
   try {
     const form = await Form.findById(req.params.id);
-    
+
     if (!form) {
       return res.status(404).send('Form not found');
     }
-    
+
     // Check if user is allowed to edit this form
     if (!form.isEditable(req.session.username)) {
       return res.status(403).send('You cannot edit this form anymore. The 24-hour edit period has expired or you are not the creator.');
     }
-    
+
     const { uid, ...formData } = req.body;
-    
-    // Validate phone number
-    if (!formData.contact_phone || !/^\+?[0-9]{10,12}$/.test(formData.contact_phone.replace(/\s/g, ''))) {
+
+    // Strictly allow only 10 digit numbers for phone fields
+    if (!formData.contact_phone || !/^\d{10}$/.test(formData.contact_phone)) {
       return res.status(400).send('Invalid phone number format. Please provide a 10-digit number.');
     }
-    
-    // Format phone numbers with country code if not present
-    if (formData.contact_phone && !formData.contact_phone.startsWith('+')) {
-      formData.contact_phone = '+91' + formData.contact_phone.replace(/\s/g, '');
+    if (formData.caregiver_phone && formData.caregiver_phone.length > 0 && !/^\d{10}$/.test(formData.caregiver_phone)) {
+      return res.status(400).send('Invalid caregiver phone number format. Please provide a 10-digit number.');
     }
-    
-    if (formData.caregiver_phone && !formData.caregiver_phone.startsWith('+')) {
-      formData.caregiver_phone = '+91' + formData.caregiver_phone.replace(/\s/g, '');
+
+    // Format phone numbers with country code
+    if (formData.contact_phone) {
+      formData.contact_phone = '+91' + formData.contact_phone;
     }
-    
-    // If referred_from is filled, set self_referred to "no"
-    if (formData.referred_from && formData.referred_from.trim() !== '') {
-      formData.self_referred = 'no';
+    if (formData.caregiver_phone) {
+      formData.caregiver_phone = '+91' + formData.caregiver_phone;
     }
-    
+
     // Update the form
     form.content = formData;
     form.lastModifiedBy = req.session.username;
@@ -384,15 +394,143 @@ router.get('/followup/level:level', isAuthenticated, (req, res) => {
   });
 });
 
-router.get('/report/level:level', isAuthenticated, (req, res) => {
-  const level = parseInt(req.params.level, 10);
-  if (![1, 2, 3].includes(level)) return res.status(404).send('Not found');
-  
-  res.render('forms/placeholder', {
+// Level-3 Report: Filtered Level-1 patients
+router.get('/report/level3', isAuthenticated, async (req, res) => {
+  // Only Level-3 users can access
+  if (req.session.userLevel !== 3) return res.redirect('/auth/login');
+
+  // Build filter query
+  let query = { level: 1 };
+  const { area, sex, cancer, deceased } = req.query;
+
+  // Collect $or conditions here to avoid overwriting
+  let orConditions = [];
+
+  if (area && area !== 'all') {
+    orConditions.push(
+      { 'content.address_permanent': { $regex: area, $options: 'i' } },
+      { 'content.address_present': { $regex: area, $options: 'i' } }
+    );
+  }
+  if (sex && sex !== 'all') {
+    orConditions.push(
+      { 'content.sex': { $regex: `^${sex}$`, $options: 'i' } },
+      { 'content.gender': { $regex: `^${sex}$`, $options: 'i' } }
+    );
+  }
+  if (orConditions.length > 0) {
+    query.$or = orConditions;
+  }
+  if (cancer && cancer !== 'all') {
+    query['content.diagnosis'] = { $regex: cancer, $options: 'i' };
+  }
+  if (deceased === 'yes') {
+    query.$or = (query.$or || []).concat([
+      { 'content.status': { $regex: 'died|deceased|dead', $options: 'i' } },
+      { 'content.died': true },
+      { 'content.is_deceased': true }
+    ]);
+  } else if (deceased === 'no') {
+    query.$and = [
+      ...(query.$and || []),
+      { $or: [
+        { 'content.status': { $not: /died|deceased|dead/i } },
+        { 'content.died': { $ne: true } },
+        { 'content.is_deceased': { $ne: true } }
+      ]}
+    ];
+  }
+
+  // Fetch all unique values for filter dropdowns
+  const areas = await Form.distinct('content.address_permanent', { level: 1 });
+  // Combine unique values from both sex and gender fields for the dropdown
+  const sexes1 = await Form.distinct('content.sex', { level: 1 });
+  const sexes2 = await Form.distinct('content.gender', { level: 1 });
+  const sexes = Array.from(new Set([...sexes1, ...sexes2]));
+  const cancers = await Form.distinct('content.diagnosis', { level: 1 });
+
+  // Remove empty/undefined values
+  const clean = arr => arr.filter(v => v && v.trim && v.trim().length > 0);
+
+  const forms = await Form.find(query).sort({ createdAt: -1 });
+
+  res.render('report-level3', {
     username: req.session.username,
-    level,
-    title: 'Report (Coming Soon)'
+    forms,
+    filters: {
+      areas: clean(areas),
+      sexes: clean(sexes),
+      cancers: clean(cancers)
+    },
+    selected: { area, sex, cancer, deceased }
   });
+});
+
+// Doctor list (random names)
+const DOCTORS = [
+  'John Doe (Oncologist)',
+  'Jane Smith (Palliative Care)',
+  'Alice Brown (Radiologist)',
+  'Bob Lee (Surgeon)',
+  'Priya Patel (General Medicine)'
+];
+
+// Book Appointment - GET (Level-1 and Level-2 users)
+router.get('/appointments/book', isAuthenticated, async (req, res) => {
+  // Only Level-1 and Level-2 users can access booking page
+  if (![1,2].includes(req.session.userLevel)) return res.redirect('/auth/login');
+  // Fetch all Level-1 registered patients
+  const patients = await Form.find({ level: 1 }, { uid: 1, 'content.name': 1 }).sort({ createdAt: -1 });
+  res.render('appointments/book', {
+    username: req.session.username,
+    userLevel: req.session.userLevel,
+    patients,
+    doctors: DOCTORS
+  });
+});
+
+// Book Appointment - POST
+router.post('/appointments/book', isAuthenticated, async (req, res) => {
+  if (![1,2].includes(req.session.userLevel)) return res.status(403).send('Forbidden');
+  const { patientUid, doctor, date } = req.body;
+  // Find patient name from UID
+  const patient = await Form.findOne({ level: 1, uid: patientUid });
+  if (!patient) return res.status(400).send('Invalid patient UID');
+  await Appointment.create({
+    patientUid,
+    patientName: patient.content.name,
+    doctor,
+    date,
+    createdBy: req.session.username
+  });
+  res.redirect('/forms/appointments/book?success=1');
+});
+
+// View Appointments - Level-3 only
+router.get('/appointments/view', isAuthenticated, async (req, res) => {
+  if (req.session.userLevel !== 3) return res.redirect('/auth/login');
+  const appointments = await Appointment.find({}).sort({ date: 1 });
+  res.render('appointments/view', {
+    username: req.session.username,
+    appointments,
+    doctors: DOCTORS
+  });
+});
+
+// API: Get all appointments (for FullCalendar, Level-3 only)
+router.get('/appointments/api', isAuthenticated, async (req, res) => {
+  if (req.session.userLevel !== 3) return res.status(403).json([]);
+  const appointments = await Appointment.find({});
+  res.json(appointments.map(a => ({
+    id: a._id,
+    title: `${a.patientName} with ${a.doctor}`,
+    start: a.date,
+    extendedProps: {
+      patientUid: a.patientUid,
+      doctor: a.doctor,
+      createdBy: a.createdBy
+    }
+  })));
 });
 
 module.exports = router;

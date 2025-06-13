@@ -61,7 +61,6 @@
                             <th>Last Login</th>
                             <th>Last Logout</th>
                             <th>Session Duration</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,11 +84,6 @@
                                         data-logout="<%= user.lastLogoutAt ? user.lastLogoutAt.toISOString() : '' %>">
                                         <!-- Will be filled by JS -->
                                     </span>
-                                </td>
-                                <td>
-                                    <form action="/admin/delete-user/<%= user._id %>" method="POST" style="display: inline;">
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
                                 </td>
                             </tr>
                         <% }); %>
