@@ -96,8 +96,8 @@ A multi-level hospital management system for patient case records, psycho-social
 
 ### User Roles
 
-- **Level 1:** Can create/edit Level-1 forms, view Level-3 forms, book appointments.
-- **Level 2:** Can create Level-2 forms, view Level-1/2 forms, book appointments.
+- **Level 1:** Can create/edit Level-1 forms, and book appointments.
+- **Level 2:** Can create Level-2 forms
 - **Level 3:** Can create Level-3 forms, view all forms, manage appointments, access reports.
 
 ### Admin
